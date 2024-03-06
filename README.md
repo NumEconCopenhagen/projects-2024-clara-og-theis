@@ -1,9 +1,8 @@
-# \[Group name\]
+# \[Clara og Theis\]
 
 **Group members:**
-- A
-- B
-- C
+- Clara Parbøl Engelund (fqc147)
+- Theis Scheuer Jansen
 
 This repository contains  
 1. Inaugural project. 
