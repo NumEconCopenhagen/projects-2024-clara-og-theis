@@ -1,4 +1,4 @@
-# \Clara og Theis\
+# Clara og Theis
 
 **Group members:**
 - Clara Parbøl Engelund (fqc147)
