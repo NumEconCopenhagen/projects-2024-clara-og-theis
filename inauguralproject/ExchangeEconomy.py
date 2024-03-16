@@ -20,7 +20,7 @@ class ExchangeEconomyClass:
 
     def utility_B(self,x1B,x2B):
         par = self.par
-        return x1B**par.alpha*x2B**(1-par.alpha)
+        return x1B**par.beta*x2B**(1-par.beta)
 
     def demand_A(self,p1):
         par = self.par
@@ -42,10 +42,10 @@ class ExchangeEconomyClass:
         IB = p1*(1-par.w1A)+(1-par.w2A)
 
         #b. Demand for good 1
-        X1B = par.alpha*(IB/p1)
+        X1B = par.beta*(IB/p1)
 
         #c. Demand for good 2
-        X2B = (1-par.alpha)*(IB)
+        X2B = (1-par.beta)*(IB)
         return X1B,X2B
 
     def find_pareto_improvements(self):
