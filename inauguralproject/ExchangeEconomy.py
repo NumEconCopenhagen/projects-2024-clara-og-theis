@@ -1,3 +1,4 @@
+import numpy as np
 from types import SimpleNamespace
 
 class ExchangeEconomyClass:
@@ -32,7 +33,7 @@ class ExchangeEconomyClass:
         X1A = par.alpha*(IA/p1)
 
         #c. Demand for good 2
-        X2A = (1-par.alpha)*(IA)
+        X2A = (1-par.alpha)*IA
         return X1A,X2A
 
     def demand_B(self,p1):
@@ -45,10 +46,12 @@ class ExchangeEconomyClass:
         X1B = par.beta*(IB/p1)
 
         #c. Demand for good 2
-        X2B = (1-par.beta)*(IB)
+        X2B = (1-par.beta)*IB
         return X1B,X2B
 
     def find_pareto_improvements(self,N1,N2):
+        par = self.par
+
         # a. Initialize an array to store Pareto improvements
         shape_tuple = (N1,N2) #tuple of grid
         x1A_values = np.empty(shape_tuple)
@@ -56,23 +59,36 @@ class ExchangeEconomyClass:
         uA_values = np.empty(shape_tuple)
         uB_values = np.empty(shape_tuple)
 
+         # b. start from guess of x1=x2=0
+        x1A_best = par.w1A
+        x2A_best = par.w2A
+        uA_best = self.utility_A(par.alpha,par.w1A,par.w2A)
+        uB_best = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+
         # loop through all possibilities
         for i in range(N1):
             for j in range(N2):
                 
                 # i. x1A and x2A
-                x1A_values[i,j] = x1A = (i/(N1))
-                x2A_values[i,j] = x2A = (j/(N2))
+                x1A_values[i,j] = x1A = (i/N1)
+                x2A_values[i,j] = x2A = (j/N2)
 
                 # ii. utility
-                if utility_A(x1A,x2A, alpha=alpha) >= utility_A(par.w1A,par.w2A, alpha=alpha) and utility_B((1-x1A),(1-x2A), beta=beta) >= utility_B((1-par.w1A),(1-par.w2A), beta=beta):
-                    uA_values[i,j] = utility_A(x1A,x2A, alpha=alpha)
-                    uB_values[i,j] = utility_B(1-X1A,1-X2A, beta=beta)
+                if p1*x1A + x2A <= IA: 
+                    uA_values[i,j] = self.utility_A(par.alpha,x1A,x2A)
+                    uB_values[i,j] = self.utility_B(par.beta,1-X1A,1-X2A)
                 else: 
-                    uA_values[i,j] = utility_A(0,0, alpha=alpha)
-                    uB_values[i,j] = utility_B(0,0, beta=beta)
-    
-        return x1A_values, x1B_values, uA_values, uB_values 
+                    uA_values[i,j] = self.utility_A(par.alpha,par.w1A,par.w2A)
+                    uB_values[i,j] = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+
+                # iii. check if best sofar
+                if uA_values[i,j] > uA_best and uB_values[i,j] > uB_best:
+                    x1A_best = x1A_values[i,j]
+                    x2A_best = x2A_values[i,j] 
+                    uA_best = uA_values[i,j]
+                    uB_best = uA_values[i,j]
+
+        return x1A_values, x2A_values, uA_values, uB_values 
 
         
     def check_market_clearing(self,p1):
