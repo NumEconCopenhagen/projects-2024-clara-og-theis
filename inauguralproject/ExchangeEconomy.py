@@ -1,5 +1,6 @@
 import numpy as np
 from types import SimpleNamespace
+from scipy import optimize
 
 class ExchangeEconomyClass:
 
@@ -108,6 +109,41 @@ class ExchangeEconomyClass:
         eps2 = x2A-par.w2A + x2B-(1-par.w2A)
 
         return eps1,eps2
+    
+    # Equilibrium
+    def excess(self,p1):
+        par = self.par
+        x1A,x2A = self.demand_A(p1)
+        x1B,x2B = self.demand_B(p1)
+        eps1 = x1A-par.w1A + x1B-(1-par.w1A)
+
+        return eps1
+    
+    def find_equilibrium_wage(self, p_low, p_high, do_grid_search = True,do_print = True):
+        par = self.par
+
+        p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
+        p1_values_array = np.array(p1_values)
+
+        if do_grid_search:
+            found_bracket = False
+            for i,p in enumerate(p1_values_array):
+                excess = self.excess(p)
+                if do_print:
+                    print(f'p= {p:.2f}, excess = {excess:.2f}')
+
+                # save the bracket that contains 0
+                if excess < 0 and not found_bracket:
+                    p_low = p1_values_array[i-1]
+                    p_high = p1_values_array[i]
+                    found_bracket = True
+        
+        print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
+
+        # Find the equilibrium wage
+        p1_eq = optimize.brentq(self.excess, p_low, p_high)
+        if do_print:
+            print(f'\nMarket clearing price: {p1_eq:.2f}')
     
 
         
