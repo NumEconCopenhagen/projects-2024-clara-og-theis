@@ -48,11 +48,11 @@ class ExchangeEconomyClass:
         X2B = (1-par.beta)*(IB)
         return X1B,X2B
 
-    def find_pareto_improvements(self):
+    def find_pareto_improvements(self,N1,N2):
         # a. Initialize an array to store Pareto improvements
         shape_tuple = (N1,N2) #tuple of grid
-        x1_values = np.empty(shape_tuple)
-        x2_values = np.empty(shape_tuple)
+        x1A_values = np.empty(shape_tuple)
+        x2A_values = np.empty(shape_tuple)
         uA_values = np.empty(shape_tuple)
         uB_values = np.empty(shape_tuple)
 
@@ -60,19 +60,19 @@ class ExchangeEconomyClass:
         for i in range(N1):
             for j in range(N2):
                 
-                # i. x1A and x2A (chained assignment)
+                # i. x1A and x2A
                 x1A_values[i,j] = x1A = (i/(N1))
                 x2A_values[i,j] = x2A = (j/(N2))
 
                 # ii. utility
                 if utility_A(x1A,x2A, alpha=alpha) >= utility_A(par.w1A,par.w2A, alpha=alpha) and utility_B((1-x1A),(1-x2A), beta=beta) >= utility_B((1-par.w1A),(1-par.w2A), beta=beta):
                     uA_values[i,j] = utility_A(x1A,x2A, alpha=alpha)
-                    uB_values[i,j] = utility_B(x1B,x2B, beta=beta)
+                    uB_values[i,j] = utility_B(1-X1A,1-X2A, beta=beta)
                 else: 
                     uA_values[i,j] = utility_A(0,0, alpha=alpha)
                     uB_values[i,j] = utility_B(0,0, beta=beta)
     
-        return 
+        return x1A_values, x1B_values, uA_values, uB_values 
 
         
     def check_market_clearing(self,p1):
@@ -87,8 +87,5 @@ class ExchangeEconomyClass:
 
         return eps1,eps2
     
-    def myfun(n):
-    for i in range(n):
-        print('hello world!')
 
         
