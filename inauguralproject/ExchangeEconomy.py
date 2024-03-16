@@ -49,7 +49,7 @@ class ExchangeEconomyClass:
         X2B = (1-par.beta)*IB
         return X1B,X2B
 
-    def find_pareto_improvements(self,N1,N2):
+    def find_pareto_improvements(self,N1,N2,do_print=True):
         par = self.par
 
         # a. Initialize an array to store Pareto improvements
@@ -59,40 +59,46 @@ class ExchangeEconomyClass:
         uA_values = np.empty(shape_tuple)
         uB_values = np.empty(shape_tuple)
 
+        # a. Initialize lists to store Pareto improvements
+        pareto_improvements = []
+
          # b. start from guess of x1=x2=0
-        x1A_best = par.w1A
-        x2A_best = par.w2A
-        uA_best = self.utility_A(par.alpha,par.w1A,par.w2A)
-        uB_best = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+        x1A_endowment = par.w1A
+        x2A_endowment = par.w2A
+        uA_endowment = self.utility_A(par.w1A,par.w2A)
+        uB_endowment = self.utility_B((1-par.w1A),(1-par.w2A))
 
         # loop through all possibilities
         for i in range(N1):
             for j in range(N2):
                 
-                # i. x1A and x2A
+                # i. Define x1A, x1B and utilities for every loop
                 x1A_values[i,j] = x1A = (i/N1)
                 x2A_values[i,j] = x2A = (j/N2)
 
+                uA_values[i,j] = uA = self.utility_A(x1A,x2A)
+                uB_values[i,j] = uB = self.utility_B(1-x1A,1-x2A)
+
                 # ii. utility
-                if p1*x1A + x2A <= IA: 
-                    uA_values[i,j] = self.utility_A(par.alpha,x1A,x2A)
-                    uB_values[i,j] = self.utility_B(par.beta,1-X1A,1-X2A)
-                else: 
-                    uA_values[i,j] = self.utility_A(par.alpha,par.w1A,par.w2A)
-                    uB_values[i,j] = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+                #if p1*x1A + x2A <= IA: 
+                    #uA_values[i,j] = self.utility_A(x1A,x2A)
+                    #uB_values[i,j] = self.utility_B(1-X1A,1-X2A)
+                #else: 
+                    #uA_values[i,j] = self.utility_A(par.w1A,par.w2A)
+                    #uB_values[i,j] = self.utility_B((1-par.w1A),(1-par.w2A))
 
                 # iii. check if best sofar
-                if uA_values[i,j] > uA_best and uB_values[i,j] > uB_best:
-                    x1A_best = x1A_values[i,j]
-                    x2A_best = x2A_values[i,j] 
-                    uA_best = uA_values[i,j]
-                    uB_best = uA_values[i,j]
+                if uA_values[i,j] > uA_endowment and uB_values[i,j] > uB_endowment:
+                    pareto_improvements.append((x1A, x2A))
 
-        return x1A_values, x2A_values, uA_values, uB_values 
+                    #x1A_best = x1A_values[i,j]
+                    #x2A_best = x2A_values[i,j] 
+                    #uA_best = uA_values[i,j]
+                    #uB_best = uA_values[i,j]
 
-        
+        return pareto_improvements
+
     def check_market_clearing(self,p1):
-
         par = self.par
 
         x1A,x2A = self.demand_A(p1)
