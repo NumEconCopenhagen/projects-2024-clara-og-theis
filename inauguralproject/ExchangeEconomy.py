@@ -48,21 +48,33 @@ class ExchangeEconomyClass:
         X2B = (1-par.alpha)*(IB)
         return X1B,X2B
 
-
-    #Find consumer optimum independent of price, evt. grid solve
     def find_pareto_improvements(self):
         # a. Initialize an array to store Pareto improvements
-        pareto_improvements = []
+        shape_tuple = (N1,N2) #tuple of grid
+        x1_values = np.empty(shape_tuple)
+        x2_values = np.empty(shape_tuple)
+        uA_values = np.empty(shape_tuple)
+        uB_values = np.empty(shape_tuple)
 
         # loop through all possibilities
-        for xA1 in range(N1):
-            for xA2 in range(N2):
+        for i in range(N1):
+            for j in range(N2):
                 
-                if utilityA(x1A,x2A) >= utilityA(par.w1A,par.w2A) and utilityB((1-x1A),(1-x2A)) >= utilityA((1-par.w1A),(1-par.w2A)):
-                    pareto_improvements.append((X1A,XA2))
-    
-        return pareto_improvements 
+                # i. x1A and x2A (chained assignment)
+                x1A_values[i,j] = x1A = (i/(N1))
+                x2A_values[i,j] = x2A = (j/(N2))
 
+                # ii. utility
+                if utility_A(x1A,x2A, alpha=alpha) >= utility_A(par.w1A,par.w2A, alpha=alpha) and utility_B((1-x1A),(1-x2A), beta=beta) >= utility_B((1-par.w1A),(1-par.w2A), beta=beta):
+                    uA_values[i,j] = utility_A(x1A,x2A, alpha=alpha)
+                    uB_values[i,j] = utility_B(x1B,x2B, beta=beta)
+                else: 
+                    uA_values[i,j] = utility_A(0,0, alpha=alpha)
+                    uB_values[i,j] = utility_B(0,0, beta=beta)
+    
+        return 
+
+        
     def check_market_clearing(self,p1):
 
         par = self.par
