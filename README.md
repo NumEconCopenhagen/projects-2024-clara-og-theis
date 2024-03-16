@@ -2,7 +2,7 @@
 
 **Group members:**
 - Clara Parbøl Engelund (fqc147)
-- Theis Scheuer Jansen
+- Theis Scheuer Jansen (pgb123)
 
 This repository contains  
 1. Inaugural project. 
