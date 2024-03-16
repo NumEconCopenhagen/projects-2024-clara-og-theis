@@ -17,3 +17,4 @@ utility_value = economy_instance.utility_A(1, 1)
 
 print(utility_value)
 
+d
