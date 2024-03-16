@@ -59,6 +59,12 @@ class ExchangeEconomyClass:
         uA_values = np.empty(shape_tuple)
         uB_values = np.empty(shape_tuple)
 
+         # b. start from guess of x1=x2=0
+        x1A_best = par.w1A
+        x2A_best = par.w2A
+        uA_best = self.utility_A(par.alpha,par.w1A,par.w2A)
+        uB_best = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+
         # loop through all possibilities
         for i in range(N1):
             for j in range(N2):
@@ -68,14 +74,21 @@ class ExchangeEconomyClass:
                 x2A_values[i,j] = x2A = (j/N2)
 
                 # ii. utility
-                if self.utility_A(x1A,x2A) >= self.utility_A(par.w1A,par.w2A, par.alpha) and self.utility_B(par.beta,(1-x1A),(1-x2A)) >= self.utility_B(par.beta,(1-par.w1A),(1-par.w2A)):
-                    uA_values[i,j] = utility_A(par.alpha,x1A,x2A)
-                    uB_values[i,j] = utility_B(par.beta,1-X1A,1-X2A)
+                if p1*x1A + x2A <= IA: 
+                    uA_values[i,j] = self.utility_A(par.alpha,x1A,x2A)
+                    uB_values[i,j] = self.utility_B(par.beta,1-X1A,1-X2A)
                 else: 
-                    uA_values[i,j] = utility_A(par.alpha,0,0)
-                    uB_values[i,j] = utility_B(par.beta,0,0)
-    
-        return x1A_values, x1B_values, uA_values, uB_values 
+                    uA_values[i,j] = self.utility_A(par.alpha,par.w1A,par.w2A)
+                    uB_values[i,j] = self.utility_B(par.beta,(1-par.w1A),(1-par.w2A))
+
+                # iii. check if best sofar
+                if uA_values[i,j] > uA_best and uB_values[i,j] > uB_best:
+                    x1A_best = x1A_values[i,j]
+                    x2A_best = x2A_values[i,j] 
+                    uA_best = uA_values[i,j]
+                    uB_best = uA_values[i,j]
+
+        return x1A_values, x2A_values, uA_values, uB_values 
 
         
     def check_market_clearing(self,p1):
