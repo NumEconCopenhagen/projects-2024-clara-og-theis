@@ -144,6 +144,22 @@ class ExchangeEconomyClass:
         p1_eq = optimize.brentq(self.excess, p_low, p_high)
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
-    
 
+
+    def consumer_optimum(self, N1, N2):
+        par = self.par
+
+        obj = lambda x: -self.utility_A(x[0], x[1])  # utility function
+
+        pareto_improvements = self.find_pareto_improvements(N1, N2)
+
+        pareto_constraint = lambda x: any(all(np.isclose(a, b) for a, b in zip(x, improvement)) for improvement in pareto_improvements)
+
+        x0 = np.array([par.w1A , par.w2A])  # Initial guess
+
+        res = optimize.minimize(obj, x0=x0, constraints={'type': 'eq', 'fun': pareto_constraint})
+
+        return res
         
+
+    
