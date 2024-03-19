@@ -144,6 +144,56 @@ class ExchangeEconomyClass:
         p1_eq = optimize.brentq(self.excess, p_low, p_high)
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
-    
 
+
+    def solver(self, N1, N2):
+        #Grid search over kombinationer i pareto_improvements
+
+        par = self.par
+
+        obj = lambda x: -self.utility_A(x[0], x[1])  # utility function
+
+        const = ({'type':'ineq','fun':lambda x: self.find_pareto_improvements(x[0],x[1],par)})
+
+        x0 = np.array([par.w1A , par.w2A])  # Initial guess
+
+        res = optimize.minimize(obj, x0=x0, constraints={'type': 'eq', 'fun': const}, method='SLSQP')
+
+        return res
+
+     def optimiser(self,N1,N2,do_print=True):
+    
+        # a. Initialize an array to store Pareto improvements
+        shape_tuple = (N1,N2) #tuple of grid
+        x1A_values = np.empty(shape_tuple)
+        x2A_values = np.empty(shape_tuple)
+        uA_values = np.empty(shape_tuple)
+        uB_values = np.empty(shape_tuple)
+
+         # b. start from guess 
+        x1A_endowment = par.w1A
+        x2A_endowment = par.w2A
+        uA_endowment = self.utility_A(par.w1A,par.w2A)
+        uB_endowment = self.utility_B((1-par.w1A),(1-par.w2A))
+
+        # c. loop through all possibilities
+        for i,j in self.find_pareto_improvements():
+            
+            # i. x1 and x2 (chained assignment)
+            x1_values[i,j] = x1 = self.demand_A.X1A(self,p1)
+            x2_values[i,j] = x2 = self.demand_A.X2A(self,p1)
+
+            # iii. check if best sofar
+            if u_values[i,j] > u_best:
+                x1_best = x1_values[i,j]
+                x2_best = x2_values[i,j] 
+                u_best = u_values[i,j]
+    
+        # d. print
+        if do_print:
+            print_solution(x1_best,x2_best,u_best,I,p1,p2)
+
+        return x1_best,x2_best,u_best,x1_values,x2_values,u_values
         
+
+    
