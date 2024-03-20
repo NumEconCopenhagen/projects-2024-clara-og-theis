@@ -5,6 +5,7 @@ from scipy import optimize
 class ExchangeEconomyClass:
 
     def __init__(self):
+        """ setup model """
 
         par = self.par = SimpleNamespace()
 
@@ -17,14 +18,20 @@ class ExchangeEconomyClass:
         par.w2A = 0.3
 
     def utility_A(self,x1A,x2A):
+        """ calculate utility of consumer A """
+
         par = self.par
         return x1A**par.alpha*x2A**(1-par.alpha)
 
     def utility_B(self,x1B,x2B):
+        """ calculate utility of consumer B """
+
         par = self.par
         return x1B**par.beta*x2B**(1-par.beta)
 
     def demand_A(self,p1):
+        """ calculate demand of consumer A """
+
         par = self.par
 
         #a. Income
@@ -38,6 +45,8 @@ class ExchangeEconomyClass:
         return X1A,X2A
 
     def demand_B(self,p1):
+        """ calculate demand of consumer B """
+
         par = self.par
 
         #a. Income 
@@ -51,25 +60,27 @@ class ExchangeEconomyClass:
         return X1B,X2B
 
     def find_pareto_improvements(self,N1,N2,do_print=True):
+        """ find pareto improvements compared to initial endowment """
+
         par = self.par
 
-        # a. Initialize an array to store Pareto improvements
+        # a. Initialize tuples
         shape_tuple = (N1,N2) #tuple of grid
         x1A_values = np.empty(shape_tuple)
         x2A_values = np.empty(shape_tuple)
         uA_values = np.empty(shape_tuple)
         uB_values = np.empty(shape_tuple)
 
-        # a. Initialize lists to store Pareto improvements
+        # b. Initialize lists to store Pareto improvements
         pareto_improvements = []
 
-         # b. start from guess of x1=x2=0
+        # c. start from guess of endowments
         x1A_endowment = par.w1A
         x2A_endowment = par.w2A
         uA_endowment = self.utility_A(par.w1A,par.w2A)
         uB_endowment = self.utility_B((1-par.w1A),(1-par.w2A))
 
-        # loop through all possibilities
+        # d. loop through all possibilities
         for i in range(N1):
             for j in range(N2):
                 
@@ -88,38 +99,43 @@ class ExchangeEconomyClass:
                     #uA_values[i,j] = self.utility_A(par.w1A,par.w2A)
                     #uB_values[i,j] = self.utility_B((1-par.w1A),(1-par.w2A))
 
-                # iii. check if best sofar
+                # i. check if best sofar
                 if uA_values[i,j] > uA_endowment and uB_values[i,j] > uB_endowment:
                     pareto_improvements.append((x1A, x2A))
-
-                    #x1A_best = x1A_values[i,j]
-                    #x2A_best = x2A_values[i,j] 
-                    #uA_best = uA_values[i,j]
-                    #uB_best = uA_values[i,j]
 
         return pareto_improvements
 
     def check_market_clearing(self,p1):
+        """ cheack market clearing conditions """
+
         par = self.par
 
+        # a. define demand 
         x1A,x2A = self.demand_A(p1)
         x1B,x2B = self.demand_B(p1)
 
+        # b. calculate the market error
         eps1 = x1A-par.w1A + x1B-(1-par.w1A)
         eps2 = x2A-par.w2A + x2B-(1-par.w2A)
 
         return eps1,eps2
     
-    # Equilibrium
     def excess(self,p1):
+        """ calculate excess demand for good 1 """
         par = self.par
+        
+        # a. define demand 
         x1A,x2A = self.demand_A(p1)
         x1B,x2B = self.demand_B(p1)
+        
+        # b. calculate market error for the market of good 1
         eps1 = x1A-par.w1A + x1B-(1-par.w1A)
 
         return eps1
     
-    def find_equilibrium_wage(self, p_low, p_high, do_grid_search = True,do_print = True):
+    def find_equilibrium(self, p_low, p_high, do_grid_search = True,do_print = True):
+        """ find market clearing price """
+        
         par = self.par
 
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
@@ -140,60 +156,88 @@ class ExchangeEconomyClass:
         
         print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
 
-        # Find the equilibrium wage
+        # Find the equilibrium price
         p1_eq = optimize.brentq(self.excess, p_low, p_high)
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
 
-
-    def solver(self, N1, N2):
-        #Grid search over kombinationer i pareto_improvements
+    def optimizer(self,do_print=True):
+        """ maximize utility of consumer A in pareto improvements"""
 
         par = self.par
 
-        obj = lambda x: -self.utility_A(x[0], x[1])  # utility function
+        # a. start from guess which is the initial endowment
+        X1A_best = par.w1A
+        X2A_best = par.w2A
+        uA_best = self.utility_A(par.w1A,par.w2A)
 
-        const = ({'type':'ineq','fun':lambda x: self.find_pareto_improvements(x[0],x[1],par)})
-
-        x0 = np.array([par.w1A , par.w2A])  # Initial guess
-
-        res = optimize.minimize(obj, x0=x0, constraints={'type': 'eq', 'fun': const}, method='SLSQP')
-
-        return res
-
-     def optimiser(self,N1,N2,do_print=True):
-    
-        # a. Initialize an array to store Pareto improvements
-        shape_tuple = (N1,N2) #tuple of grid
-        x1A_values = np.empty(shape_tuple)
-        x2A_values = np.empty(shape_tuple)
-        uA_values = np.empty(shape_tuple)
-        uB_values = np.empty(shape_tuple)
-
-         # b. start from guess 
-        x1A_endowment = par.w1A
-        x2A_endowment = par.w2A
-        uA_endowment = self.utility_A(par.w1A,par.w2A)
-        uB_endowment = self.utility_B((1-par.w1A),(1-par.w2A))
-
-        # c. loop through all possibilities
-        for i,j in self.find_pareto_improvements():
+        # b. loop through all the pareto improvements
+        for X1A,X2A in self.find_pareto_improvements(N1=76,N2=76):
             
-            # i. x1 and x2 (chained assignment)
-            x1_values[i,j] = x1 = self.demand_A.X1A(self,p1)
-            x2_values[i,j] = x2 = self.demand_A.X2A(self,p1)
+            # i. Utility
+            uA = self.utility_A(X1A,X2A)
 
             # iii. check if best sofar
-            if u_values[i,j] > u_best:
-                x1_best = x1_values[i,j]
-                x2_best = x2_values[i,j] 
-                u_best = u_values[i,j]
-    
-        # d. print
+            if uA > uA_best:
+                X1A_best = X1A
+                X2A_best = X2A 
+                u_best = uA
+
+        # c. print solution
         if do_print:
-            print_solution(x1_best,x2_best,u_best,I,p1,p2)
-
-        return x1_best,x2_best,u_best,x1_values,x2_values,u_values
-        
-
+            self.print_solution(X1A_best,X2A_best,u_best) 
     
+        return X1A_best, X2A_best, u_best
+
+
+    def solver(self,do_print=True):
+        """ maximize utility of consumer A where A is market maker"""
+
+        par = self.par
+
+        # a. objective function (to minimize) 
+        obj = lambda x: -self.utility_A(x[0], x[1])  # utility function
+
+        # b. constraints and bounds
+        const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
+        bounds = ((0,1),(0,1))
+
+        # c. call solver, use SLSQP
+        initial_guess = np.array([par.w1A , par.w2A])  # Initial guess
+
+        res = optimize.minimize(obj, initial_guess, bounds=bounds, constraints=const, method='SLSQP')
+    
+        # d. unpack and print solution
+        x1A = res.x[0]
+        x2A = res.x[1]
+        uA = self.utility_A(x1A, x2A)
+
+        if do_print:
+            self.print_solution(x1A,x2A,uA)   
+
+        return x1A, x2A, uA
+
+    def print_solution(self,x1A,x2A,uA):
+        """ print solution """
+
+        print(f'x1A = {x1A:.4f}')
+        print(f'x2A = {x2A:.4f}')
+        print(f'uA  = {uA:.4f}')
+
+    def setw(self, s1,s2):
+        """ create random set of endowments """
+
+        # a. set seed
+        np.random.seed(2000)
+
+        # b. draw uniformly distributed endowments
+        w1A = np.random.uniform(size=s1)
+        w2A = np.random.uniform(size=s2)
+
+        # c. create a random set of endowments
+        W  = list(zip(w1A,w2A))
+        
+        return W
+    
+
+ 
