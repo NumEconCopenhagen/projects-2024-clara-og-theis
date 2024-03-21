@@ -223,6 +223,35 @@ class ExchangeEconomyClass:
         print(f'x1A = {x1A:.4f}')
         print(f'x2A = {x2A:.4f}')
         print(f'uA  = {uA:.4f}')
+   
+    def solver_opg6(self,do_print=True):
+        """ maximize utility of consumer A where A is market maker"""
+
+        par = self.par
+
+        # a. objective function (to minimize) 
+        obj = lambda x: -self.utility_A(x[0], x[1])-self.utility_B(1-x[0], 1-x[1])  # utility function
+
+        # b. constraints and bounds
+        const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
+        bounds = ((0,1),(0,1))
+
+        # c. call solver, use SLSQP
+        initial_guess = np.array([par.w1A , par.w2A])  # Initial guess
+
+        res = optimize.minimize(obj, initial_guess, bounds=bounds, constraints=const, method='SLSQP')
+    
+        # d. unpack and print solution
+        x1A = res.x[0]
+        x2A = res.x[1]
+        uA = self.utility_A(x1A, x2A)
+
+        if do_print:
+            self.print_solution(x1A,x2A,uA)   
+
+        return x1A, x2A, uA
+
+
 
     def setw(self, s1,s2):
         """ create random set of endowments """

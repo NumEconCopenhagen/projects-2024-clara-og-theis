@@ -7,5 +7,6 @@ from ExchangeEconomy import ExchangeEconomyClass
 #a
 
 # Initialize the economy
-economy = ExchangeEconomyClass()
+model = ExchangeEconomyClass()
 
+model.solver_opg6()
