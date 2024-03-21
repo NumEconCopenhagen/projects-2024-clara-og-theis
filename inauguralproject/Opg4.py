@@ -30,9 +30,10 @@ for p1 in p1_values_array:
     if utility > utility_best:
         utility_best = utility
         bedst_p1 = p1
-        best_arguments = (X1A, X1A)  # Save demands directly
+        best_arguments = (X1A, X1B)  # Save demands directly
 
 print(f'Best utility is {utility_best:.8f} at p1 = {bedst_p1:.8f}')
+print(f' optimal allocation for A is as follows, x1: {1-X1B:.8f} and x2: {1-X2B:.8f}')
 
 
 # b) same as in a but with where P>0

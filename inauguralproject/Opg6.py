@@ -8,3 +8,4 @@ from ExchangeEconomy import ExchangeEconomyClass
 
 # Initialize the economy
 economy = ExchangeEconomyClass()
+
