@@ -91,15 +91,7 @@ class ExchangeEconomyClass:
                 uA_values[i,j] = uA = self.utility_A(x1A,x2A)
                 uB_values[i,j] = uB = self.utility_B(1-x1A,1-x2A)
 
-                # ii. utility
-                #if p1*x1A + x2A <= IA: 
-                    #uA_values[i,j] = self.utility_A(x1A,x2A)
-                    #uB_values[i,j] = self.utility_B(1-X1A,1-X2A)
-                #else: 
-                    #uA_values[i,j] = self.utility_A(par.w1A,par.w2A)
-                    #uB_values[i,j] = self.utility_B((1-par.w1A),(1-par.w2A))
-
-                # i. check if best sofar
+                # ii. check if best sofar
                 if uA_values[i,j] > uA_endowment and uB_values[i,j] > uB_endowment:
                     pareto_improvements.append((x1A, x2A))
 
@@ -161,7 +153,7 @@ class ExchangeEconomyClass:
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
 
-    def optimizer(self,do_print=True):
+    def pareto_optimizer(self,do_print=True):
         """ maximize utility of consumer A in pareto improvements"""
 
         par = self.par
@@ -190,7 +182,7 @@ class ExchangeEconomyClass:
         return X1A_best, X2A_best, u_best
 
 
-    def solver(self,do_print=True):
+    def marketmaker_solver(self,do_print=True):
         """ maximize utility of consumer A where A is market maker"""
 
         par = self.par
@@ -224,8 +216,8 @@ class ExchangeEconomyClass:
         print(f'x2A = {x2A:.4f}')
         print(f'uA  = {uA:.4f}')
    
-    def solver_opg6(self,do_print=True):
-        """ XX """
+    def socialplanner_solver(self,do_print=True):
+        """ maximize aggregate utility """
 
         par = self.par
 
@@ -233,13 +225,13 @@ class ExchangeEconomyClass:
         obj = lambda x: -self.utility_A(x[0], x[1])-self.utility_B(1-x[0], 1-x[1])  # utility function
 
         # b. constraints and bounds
-        const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
+        #const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
         bounds = ((0,1),(0,1))
 
         # c. call solver, use SLSQP
         initial_guess = np.array([par.w1A , par.w2A])  # Initial guess
 
-        res = optimize.minimize(obj, initial_guess, bounds=bounds, constraints=const, method='SLSQP')
+        res = optimize.minimize(obj, initial_guess, bounds=bounds, method='SLSQP')
     
         # d. unpack and print solution
         x1A = res.x[0]
