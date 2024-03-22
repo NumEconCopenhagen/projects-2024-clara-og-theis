@@ -225,7 +225,7 @@ class ExchangeEconomyClass:
         print(f'uA  = {uA:.4f}')
    
     def solver_opg6(self,do_print=True):
-        """ maximize utility of consumer A where A is market maker"""
+        """ XX """
 
         par = self.par
 
@@ -251,8 +251,6 @@ class ExchangeEconomyClass:
 
         return x1A, x2A, uA
 
-
-
     def setw(self, s1,s2):
         """ create random set of endowments """
 
@@ -268,5 +266,57 @@ class ExchangeEconomyClass:
         
         return W
     
+
+    def excessopg8(self,p1, N1):
+        """ calculate excess demand for good 1 """
+        par = self.par
+
+        # a. Initialize tuples
+        shape_tuple = (N1) #tuple of grid
+        x1A_values = np.empty(shape_tuple)
+        x2A_values = np.empty(shape_tuple)
+        x1B_values = np.empty(shape_tuple)
+        x2B_values = np.empty(shape_tuple)
+        eps1_values = np.empty(shape_tuple)
+        uA_values = np.empty(shape_tuple)
+        uB_values = np.empty(shape_tuple)
+        
+        for w1A,w2A in self.setw(s1 = 50, s2 = 50):
+            # b. define demand 
+            x1A_values,x2A_values = self.demand_A(p1, w1A)
+            x1B_values,x2B_values = self.demand_B(p1, w2A)
+        
+             # c. calculate market error for the market of good 1
+            eps1_values = x1A-w1A + x1B-(1-w1A)
+
+        return eps1_values
+    
+    def find_equilibrium_opg8(self, p_low, p_high, do_grid_search = True,do_print = True):
+        """ find market clearing price """
+        
+        par = self.par
+
+        p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
+        p1_values_array = np.array(p1_values)
+
+        if do_grid_search:
+            found_bracket = False
+            for i,p in enumerate(p1_values_array):
+                excess = self.excess(p)
+                if do_print:
+                    print(f'p= {p:.2f}, excess = {excess:.2f}')
+
+                # save the bracket that contains 0
+                if excess < 0 and not found_bracket:
+                    p_low = p1_values_array[i-1]
+                    p_high = p1_values_array[i]
+                    found_bracket = True
+        
+        print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
+
+        # Find the equilibrium price
+        p1_eq = optimize.brentq(self.excess, p_low, p_high)
+        if do_print:
+            print(f'\nMarket clearing price: {p1_eq:.2f}')
 
  
