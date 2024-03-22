@@ -98,7 +98,7 @@ class ExchangeEconomyClass:
         return pareto_improvements
 
     def check_market_clearing(self,p1):
-        """ cheack market clearing conditions """
+        """ check market clearing conditions """
 
         par = self.par
 
@@ -130,9 +130,11 @@ class ExchangeEconomyClass:
         
         par = self.par
 
+        # a. define prices
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
         p1_values_array = np.array(p1_values)
 
+        # b. find price interval where the market error is close to zero
         if do_grid_search:
             found_bracket = False
             for i,p in enumerate(p1_values_array):
@@ -148,7 +150,7 @@ class ExchangeEconomyClass:
         
         print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
 
-        # Find the equilibrium price
+        # c. find the equilibrium price
         p1_eq = optimize.brentq(self.excess, p_low, p_high)
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
@@ -259,8 +261,8 @@ class ExchangeEconomyClass:
         return W
     
 
-    def demand_Aopg8(self,p1, w1A, w2A):
-        """ calculate demand of consumer A again"""
+    def demand_A_wset(self,p1, w1A, w2A):
+        """ calculate demand of consumer A with variable endowment"""
 
         par = self.par
 
@@ -274,8 +276,8 @@ class ExchangeEconomyClass:
         X2A = (1-par.alpha)*IA
         return X1A,X2A
 
-    def demand_Bopg8(self,p1, w1A, w2A):
-        """ calculate demand of consumer B again"""
+    def demand_B_wset(self,p1, w1A, w2A):
+        """ calculate demand of consumer B with variable endowment"""
 
         par = self.par
 
@@ -290,45 +292,40 @@ class ExchangeEconomyClass:
         return X1B,X2B
 
 
-    def excessopg8(self,p1, N1):
+    def excess_wset(self,p1, N1):
         """ calculate excess demand for good 1 """
         par = self.par
 
-        # a. Initialize tuples
-        #shape = (N1) 
-        #x1A_values = np.empty(shape)
-        #x2A_values = np.empty(shape)
-        #x1B_values = np.empty(shape)
-        #x2B_values = np.empty(shape)
-
+        # a. initialize 
         eps1_values = np.array([])
-        
+
+        # b. define demand for each endowment set
         for w1A,w2A in self.setw(s1 = 50, s2 = 50):
-            # b. define demand 
-            x1A,x2A = self.demand_Aopg8(p1, w1A, w2A)
-            x1B,x2B = self.demand_Bopg8(p1, w1A, w2A)
+            x1A,x2A = self.demand_A_wset(p1, w1A, w2A)
+            x1B,x2B = self.demand_B_wset(p1, w1A, w2A)
         
-        # c. calculate market error for the market of good 1
+        # c. calculate market error for the market of good 1 for each endowment combination
             eps1_values = np.append(eps1_values, x1A - w1A + x1B - (1 - w1A))
 
         return eps1_values
     
     def find_interval(self, do_grid_search = True,do_print = True):
-        """ find price interval """
+        """ find price interval for each endowment combination """
         
         par = self.par
 
+        # a. define prices
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
         p1_values_array = np.array(p1_values)
 
         interval_list = []
-        #excess = []
 
+        # b. find price interval where the market error is close to zero for each endowment combination
         if do_grid_search:
             for k in range(50):
                 found_bracket = False
                 for i,p in enumerate(p1_values_array):
-                    excess = self.excessopg8(p, N1=50) 
+                    excess = self.excess_wset(p, N1=50) 
                     if excess[k] < 0 and not found_bracket:
                         p_low = p1_values_array[i-1]
                         p_high = p1_values_array[i]
@@ -337,12 +334,22 @@ class ExchangeEconomyClass:
 
         return interval_list
 
-    def find_equilibrium_opg8(self ,do_print = True):
-        
-        for p_low, p_high in self.find_interval:
-            p1_eq = optimize.brentq(self.excessopg8, p_low, p_high)
+    def find_equilibrium_wset(self):
+        """ find equilibrium price for each endowment combination """
 
-            if do_print:
-                print(f'\nMarket clearing price: {p1_eq:.2f}')
+        par = self.par
+
+        # a. initialize list of market equilibria 
+        equilibria = []
+
+        for excess, p_low, p_high in zip(self.excess_wset,self.find_interval):
+            p1_eq = optimize.brentq(excess, p_low, p_high)
+            #x1A,x2A = self.demand_A_wset(p1_eq) #mangler noget med w
+            #equilibria.append((x1A, x2A))
+            equilibria.append(p1_eq)
+        
+        return equilibria
+
+            
 
  
