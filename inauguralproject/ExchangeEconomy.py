@@ -267,61 +267,90 @@ class ExchangeEconomyClass:
         return W
     
 
+    def demand_Aopg8(self,p1, w1A, w2A):
+        """ calculate demand of consumer A again"""
+
+        par = self.par
+
+        #a. Income
+        IA = p1*w1A+w2A
+
+        #b. Demand for good 1
+        X1A = par.alpha*(IA/p1)
+
+        #c. Demand for good 2
+        X2A = (1-par.alpha)*IA
+        return X1A,X2A
+
+    def demand_Bopg8(self,p1, w1A, w2A):
+        """ calculate demand of consumer B again"""
+
+        par = self.par
+
+        #a. Income 
+        IB = p1*(1-w1A)+(1-w2A)
+
+        #b. Demand for good 1
+        X1B = par.beta*(IB/p1)
+
+        #c. Demand for good 2
+        X2B = (1-par.beta)*IB
+        return X1B,X2B
+
+
     def excessopg8(self,p1, N1):
         """ calculate excess demand for good 1 """
         par = self.par
 
         # a. Initialize tuples
-        shape_tuple = (N1) 
-        x1A_values = np.empty(shape_tuple)
-        x2A_values = np.empty(shape_tuple)
-        x1B_values = np.empty(shape_tuple)
-        x2B_values = np.empty(shape_tuple)
-        eps1_values = np.empty(shape_tuple)
-        uA_values = np.empty(shape_tuple)
-        uB_values = np.empty(shape_tuple)
+        #shape = (N1) 
+        #x1A_values = np.empty(shape)
+        #x2A_values = np.empty(shape)
+        #x1B_values = np.empty(shape)
+        #x2B_values = np.empty(shape)
+
+        eps1_values = np.array([])
         
         for w1A,w2A in self.setw(s1 = 50, s2 = 50):
             # b. define demand 
-            x1A_values,x2A_values = self.demand_A(p1, w1A)
-            x1B_values,x2B_values = self.demand_B(p1, w2A)
+            x1A,x2A = self.demand_Aopg8(p1, w1A, w2A)
+            x1B,x2B = self.demand_Bopg8(p1, w1A, w2A)
         
-             # c. calculate market error for the market of good 1
-            eps1_values = x1A-w1A + x1B-(1-w1A)
+        # c. calculate market error for the market of good 1
+            eps1_values = np.append(eps1_values, x1A - w1A + x1B - (1 - w1A))
 
         return eps1_values
     
     def find_interval(self, do_grid_search = True,do_print = True):
-        """ find market clearing price """
+        """ find price interval """
         
         par = self.par
 
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
         p1_values_array = np.array(p1_values)
 
-        #shape_tuple = (N1) #tuple of grid
-        #excess = np.empty(shape_tuple)
-        #excess = self.excess(p)
+        interval_list = []
+        #excess = []
 
         if do_grid_search:
-            found_bracket = False
-            for i,p in enumerate(p1_values_array):
-                excess = self.excess(p)
-                for j in excess:
-                    if do_print:
-                        print(f'p= {p:.2f}, excess = {j:.2f}')
-
-                    # save the bracket that contains 0
-                    if j < 0 and not found_bracket:
+            for k in range(50):
+                found_bracket = False
+                for i,p in enumerate(p1_values_array):
+                    excess = self.excessopg8(p, N1=50) 
+                    if excess[k] < 0 and not found_bracket:
                         p_low = p1_values_array[i-1]
                         p_high = p1_values_array[i]
+                        interval_list.append((p_low, p_high))
                         found_bracket = True
-        
-        print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
 
-    def find_equilibrium_opg8(self, p_low, p_high, do_grid_search = True,do_print = True):
-        p1_eq = optimize.brentq(self.excess, p_low, p_high)
-        if do_print:
-            print(f'\nMarket clearing price: {p1_eq:.2f}')
+        return interval_list
+
+    def find_equilibrium_opg8(self ,do_print = True):
+        
+        for p_low, p_high in self.find_interval:
+            p1_eq = optimize.brentq(self.excessopg8, p_low, p_high)
+
+            if do_print:
+                print(f'\nMarket clearing price: {p1_eq:.2f}')
 
  
