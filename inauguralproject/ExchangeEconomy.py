@@ -272,7 +272,7 @@ class ExchangeEconomyClass:
         par = self.par
 
         # a. Initialize tuples
-        shape_tuple = (N1) #tuple of grid
+        shape_tuple = (N1) 
         x1A_values = np.empty(shape_tuple)
         x2A_values = np.empty(shape_tuple)
         x1B_values = np.empty(shape_tuple)
@@ -291,7 +291,7 @@ class ExchangeEconomyClass:
 
         return eps1_values
     
-    def find_equilibrium_opg8(self, p_low, p_high, do_grid_search = True,do_print = True):
+    def find_interval(self, do_grid_search = True,do_print = True):
         """ find market clearing price """
         
         par = self.par
@@ -299,22 +299,27 @@ class ExchangeEconomyClass:
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
         p1_values_array = np.array(p1_values)
 
+        #shape_tuple = (N1) #tuple of grid
+        #excess = np.empty(shape_tuple)
+        #excess = self.excess(p)
+
         if do_grid_search:
             found_bracket = False
             for i,p in enumerate(p1_values_array):
                 excess = self.excess(p)
-                if do_print:
-                    print(f'p= {p:.2f}, excess = {excess:.2f}')
+                for j in excess:
+                    if do_print:
+                        print(f'p= {p:.2f}, excess = {j:.2f}')
 
-                # save the bracket that contains 0
-                if excess < 0 and not found_bracket:
-                    p_low = p1_values_array[i-1]
-                    p_high = p1_values_array[i]
-                    found_bracket = True
+                    # save the bracket that contains 0
+                    if j < 0 and not found_bracket:
+                        p_low = p1_values_array[i-1]
+                        p_high = p1_values_array[i]
+                        found_bracket = True
         
         print(f'\nEquilibrium is in interval [{p_low:.2f}, {p_high:.2f}]')
 
-        # Find the equilibrium price
+    def find_equilibrium_opg8(self, p_low, p_high, do_grid_search = True,do_print = True):
         p1_eq = optimize.brentq(self.excess, p_low, p_high)
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
