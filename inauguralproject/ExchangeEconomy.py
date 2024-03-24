@@ -171,7 +171,7 @@ class ExchangeEconomyClass:
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
         p1_values_array = np.array(p1_values)
 
-# Iterate over each value of p1
+        # Iterate over each value of p1
         for p1 in p1_values_array:
             # a. calculate A's demand and B's demand for goods 1 and 2 at price p1
             x1A, x2A = self.demand_A(p1)  # Use agent A's demand
@@ -201,7 +201,7 @@ class ExchangeEconomyClass:
         best_p1 = np.nan
         p1_values_array = np.linspace(0.0001,10,1000)
 
-# Iterate over each value of p1
+        # Iterate over each value of p1
         for p1 in p1_values_array:
             # a. calculate A's demand and B's demand for goods 1 and 2 at price p1
             x1A, x2A = self.demand_A(p1)  # Use agent A's demand
@@ -222,8 +222,6 @@ class ExchangeEconomyClass:
             print(f'Optimal allocation for A is as follows, x1: {best_X1A:.8f} and x2: {best_X2A:.8f}')
                     
         return best_X1A, best_X2A
-
-
 
 
     def pareto_optimizer(self,do_print=True):
