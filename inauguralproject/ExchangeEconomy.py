@@ -232,14 +232,13 @@ class ExchangeEconomyClass:
         # a. objective function (to minimize) 
         obj = lambda x: -self.utility_A(x[0], x[1])-self.utility_B(1-x[0], 1-x[1])  # utility function
 
-        # b. constraints and bounds
-        const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
+        # b. Bounds
         bounds = ((0,1),(0,1))
 
         # c. call solver, use SLSQP
         initial_guess = np.array([par.w1A , par.w2A])  # Initial guess
 
-        res = optimize.minimize(obj, initial_guess, bounds=bounds, constraints=const, method='SLSQP')
+        res = optimize.minimize(obj, initial_guess, bounds=bounds, method='SLSQP')
     
         # d. unpack and print solution
         x1A = res.x[0]
