@@ -233,7 +233,7 @@ class ExchangeEconomyClass:
         # a. objective function (to minimize) 
         obj = lambda x: -self.utility_A(x[0], x[1])-self.utility_B(1-x[0], 1-x[1])  # utility function
 
-        # b. bounds
+        # b. Bounds
         bounds = ((0,1),(0,1))
 
         # c. call solver, use SLSQP
