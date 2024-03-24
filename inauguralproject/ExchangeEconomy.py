@@ -265,7 +265,7 @@ class ExchangeEconomyClass:
         W  = list(zip(w1A,w2A))
         
         return W
-    
+
 
     def demand_A_wset(self,p1, w1A, w2A):
         """ calculate demand of consumer A with variable endowment"""
@@ -297,65 +297,40 @@ class ExchangeEconomyClass:
         X2B = (1-par.beta)*IB
         return X1B,X2B
 
-
-    def excess_wset(self,p1, N1):
+    def excess_wset(self, p1, w1A, w2A):
         """ calculate excess demand for good 1 """
         par = self.par
 
-        # a. initialize 
-        eps1_values = np.array([])
-
-        # b. define demand for each endowment set
-        for w1A,w2A in self.setw(s1 = 50, s2 = 50):
-            x1A,x2A = self.demand_A_wset(p1, w1A, w2A)
-            x1B,x2B = self.demand_B_wset(p1, w1A, w2A)
+        # a. define demand for each endowment set
+        x1A,x2A = self.demand_A_wset(p1, w1A, w2A)
+        x1B,x2B = self.demand_B_wset(p1, w1A, w2A)
         
         # c. calculate market error for the market of good 1 for each endowment combination
-            eps1_values = np.append(eps1_values, x1A - w1A + x1B - (1 - w1A))
+        eps1 = x1A - w1A + x1B - (1 - w1A)
 
-        return eps1_values
+        return eps1
     
-    def find_interval(self, do_grid_search = True,do_print = True):
+    def find_equilibrium_wset(self, w1A, w2A, do_grid_search = True):
         """ find price interval for each endowment combination """
         
         par = self.par
 
         # a. define prices
-        p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
-        p1_values_array = np.array(p1_values)
+        p1_values = np.linspace(0.01, 100, 10000) 
 
-        interval_list = []
-
-        # b. find price interval where the market error is close to zero for each endowment combination
+        # b. find price interval where the market error is close to zero
         if do_grid_search:
-            for k in range(50):
-                found_bracket = False
-                for i,p in enumerate(p1_values_array):
-                    excess = self.excess_wset(p, N1=50) 
-                    if excess[k] < 0 and not found_bracket:
-                        p_low = p1_values_array[i-1]
-                        p_high = p1_values_array[i]
-                        interval_list.append((p_low, p_high))
-                        found_bracket = True
+            found_bracket = False
+            for i,p in enumerate(p1_values):
+                excess = self.excess_wset(p, w1A, w2A)
 
-        return interval_list
+                # save the bracket that contains 0
+                if excess < 0 and not found_bracket:
+                    p_low = p1_values[i-1]
+                    p_high = p1_values[i]
+                    found_bracket = True
 
-    def find_equilibrium_wset(self):
-        """ find equilibrium price for each endowment combination """
-
-        par = self.par
-
-        # a. initialize list of market equilibria 
-        equilibria = []
-
-        for excess, p_low, p_high in zip(self.excess_wset,self.find_interval):
-            p1_eq = optimize.brentq(excess, p_low, p_high)
-            #x1A,x2A = self.demand_A_wset(p1_eq) #mangler noget med w
-            #equilibria.append((x1A, x2A))
-            equilibria.append(p1_eq)
-        
-        return equilibria
-
-            
-
- 
+        # c. find the equilibrium price
+        p1_eq = optimize.brentq(self.excess_wset, p_low, p_high, args=(w1A, w2A))
+        x1A,x2A = self.demand_A_wset(p1_eq, w1A, w2A)
+        return x1A,x2A
