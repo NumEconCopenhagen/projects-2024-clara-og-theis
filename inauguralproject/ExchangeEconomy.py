@@ -191,6 +191,8 @@ class ExchangeEconomyClass:
             print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
             print(f'Optimal allocation for A is as follows, x1: {best_X1A:.8f} and x2: {best_X2A:.8f}')
 
+        return best_X1A, best_X2A
+
     def Utility_max_b(self,do_print=True):
         """ maximize utility of consumer A for prices P"""
 
@@ -218,6 +220,9 @@ class ExchangeEconomyClass:
         if do_print: 
             print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
             print(f'Optimal allocation for A is as follows, x1: {best_X1A:.8f} and x2: {best_X2A:.8f}')
+                    
+        return best_X1A, best_X2A
+
 
 
 
