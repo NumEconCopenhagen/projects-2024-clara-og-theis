@@ -155,6 +155,13 @@ class ExchangeEconomyClass:
         if do_print:
             print(f'\nMarket clearing price: {p1_eq:.2f}')
 
+        # d. check that the markets clear
+        eps1, eps2 = self.check_market_clearing(p1_eq)
+
+        if do_print:
+            print(f'\nMarket clearing errors: eps1 = {eps1:.2f}, eps2 = {eps2:.2f}')
+
+        
     def pareto_optimizer(self,do_print=True):
         """ maximize utility of consumer A in pareto improvements"""
 
@@ -226,8 +233,7 @@ class ExchangeEconomyClass:
         # a. objective function (to minimize) 
         obj = lambda x: -self.utility_A(x[0], x[1])-self.utility_B(1-x[0], 1-x[1])  # utility function
 
-        # b. constraints and bounds
-        #const = ({'type': 'ineq', 'fun': lambda x: self.utility_B(1-x[0],1-x[1]) - self.utility_B((1-par.w1A),(1-par.w2A))})
+        # b. bounds
         bounds = ((0,1),(0,1))
 
         # c. call solver, use SLSQP
