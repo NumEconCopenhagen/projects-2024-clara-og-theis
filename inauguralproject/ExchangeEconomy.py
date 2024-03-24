@@ -161,7 +161,39 @@ class ExchangeEconomyClass:
         if do_print:
             print(f'\nMarket clearing errors: eps1 = {eps1:.2f}, eps2 = {eps2:.2f}')
 
+
+    def Utility_max(self,do_print=True):
+        """ maximize utility of consumer A for prices P"""
+
+        par = self.par
+
+     # a. define prices   
+        utility_best = -np.inf
+        best_p1 = np.nan
+        p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
+        p1_values_array = np.array(p1_values)
+
+# Iterate over each value of p1
+        for p1 in p1_values_array:
+            # a. calculate A's demand and B's demand for goods 1 and 2 at price p1
+            X1A, X2A = self.demand_A(p1)  # Use agent A's demand
+            X1B, X2B = self.demand_B(p1)  # Use agent B's demand
+
+        # b. Calculate the utility for agent A using the given formula
+            utility = self.utility_A(1-X1B, 1-X2B)
+    
+        # c. Update the best utility and corresponding p1 if the current utility is higher
+            if utility > utility_best:
+                utility_best = utility
+                best_p1 = p1
         
+            if do_print: 
+                print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
+                print(f' optimal allocation for A is as follows, x1: {1-X1B:.8f} and x2: {1-X2B:.8f}')
+        
+            return X1A, X2A, utility_best
+
+
     def pareto_optimizer(self,do_print=True):
         """ maximize utility of consumer A in pareto improvements"""
 
