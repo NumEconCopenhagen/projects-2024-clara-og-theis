@@ -162,12 +162,10 @@ class ExchangeEconomyClass:
             print(f'\nMarket clearing errors: eps1 = {eps1:.2f}, eps2 = {eps2:.2f}')
 
 
-    def Utility_max(self,do_print=True):
+    def Utility_max_a(self,do_print=True):
         """ maximize utility of consumer A for prices P"""
 
-        par = self.par
-
-     # a. define prices   
+        # Define initial conditions for best utility and corresponding price
         utility_best = -np.inf
         best_p1 = np.nan
         p1_values = list(0.5 + 2 * (i / 75) for i in range(76))
@@ -176,22 +174,51 @@ class ExchangeEconomyClass:
 # Iterate over each value of p1
         for p1 in p1_values_array:
             # a. calculate A's demand and B's demand for goods 1 and 2 at price p1
-            X1A, X2A = self.demand_A(p1)  # Use agent A's demand
-            X1B, X2B = self.demand_B(p1)  # Use agent B's demand
+            x1A, x2A = self.demand_A(p1)  # Use agent A's demand
+            x1B, x2B = self.demand_B(p1)  # Use agent B's demand
 
         # b. Calculate the utility for agent A using the given formula
-            utility = self.utility_A(1-X1B, 1-X2B)
-    
+            utility = self.utility_A(1-x1B, 1-x2B)
+
         # c. Update the best utility and corresponding p1 if the current utility is higher
             if utility > utility_best:
                 utility_best = utility
                 best_p1 = p1
+                best_X1A = x1A
+                best_X2A = x2A
         
-            if do_print: 
-                print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
-                print(f' optimal allocation for A is as follows, x1: {1-X1B:.8f} and x2: {1-X2B:.8f}')
+        if do_print: 
+            print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
+            print(f'Optimal allocation for A is as follows, x1: {best_X1A:.8f} and x2: {best_X2A:.8f}')
+
+    def Utility_max_b(self,do_print=True):
+        """ maximize utility of consumer A for prices P"""
+
+        # Define initial conditions for best utility and corresponding price
+        utility_best = -np.inf
+        best_p1 = np.nan
+        p1_values_array = np.linspace(0.0001,10,1000)
+
+# Iterate over each value of p1
+        for p1 in p1_values_array:
+            # a. calculate A's demand and B's demand for goods 1 and 2 at price p1
+            x1A, x2A = self.demand_A(p1)  # Use agent A's demand
+            x1B, x2B = self.demand_B(p1)  # Use agent B's demand
+
+        # b. Calculate the utility for agent A using the given formula
+            utility = self.utility_A(1-x1B, 1-x2B)
+
+        # c. Update the best utility and corresponding p1 if the current utility is higher
+            if utility > utility_best:
+                utility_best = utility
+                best_p1 = p1
+                best_X1A = x1A
+                best_X2A = x2A
         
-            return X1A, X2A, utility_best
+        if do_print: 
+            print(f'Best utility is {utility_best:.8f} at p1 = {best_p1:.8f}')
+            print(f'Optimal allocation for A is as follows, x1: {best_X1A:.8f} and x2: {best_X2A:.8f}')
+
 
 
     def pareto_optimizer(self,do_print=True):
