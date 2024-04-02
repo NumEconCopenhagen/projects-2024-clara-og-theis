@@ -199,7 +199,7 @@ class ExchangeEconomyClass:
         # Define initial conditions for best utility and corresponding price
         utility_best = -np.inf
         best_p1 = np.nan
-        p1_values_array = np.linspace(0.0001,10,1000)
+        p1_values_array = np.linspace(0.0001,100,1000)
 
         # Iterate over each value of p1
         for p1 in p1_values_array:
