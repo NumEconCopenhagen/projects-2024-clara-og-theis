@@ -10,7 +10,7 @@ def fetching_data_emplrate():
     # Set out everything about the request in the format specified by the OECD API
     data_emplrate = oecd.data(
         resource_id="STLABOUR",
-        key="AUS+AUT+BEL+CAN+CHL+COL+CRI+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ISR+ITA+JPN+KOR+LVA+LTU+LUX+MEX+NLD+NZL+NOR+POL+PRT+SVK+SVN+ESP+SWE+CHE+TUR+GBR+USA.LREM64FE+LREM64MA+LREM64TT.STSA.A/all?startTime=2008&endTime=2023",
+        key="AUS+AUT+BEL+CAN+CHL+COL+CRI+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ISR+ITA+JPN+KOR+LVA+LTU+LUX+MEX+NLD+NZL+NOR+POL+PRT+SVK+SVN+ESP+SWE+CHE+TUR+GBR+USA.LREM64FE+LREM64MA+LREM64TT.STSA.A/all?startTime=2008&endTime=2022",
     ).to_pandas()
 
     emplrate = pd.DataFrame(data_emplrate).reset_index()
@@ -26,7 +26,7 @@ def fetching_data_hours():
     # Set out everything about the request in the format specified by the OECD API
     data_hours = oecd.data(
         resource_id="PDB_LV",
-        key="AUS+AUT+BEL+CAN+CHL+COL+CRI+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ISR+ITA+JPN+KOR+LVA+LTU+LUX+MEX+NLD+NZL+NOR+POL+PRT+SVK+SVN+ESP+SWE+CHE+TUR+GBR+USA.T_HRSAV.PEHRS/all?startTime=2008&endTime=2023",
+        key="AUS+AUT+BEL+CAN+CHL+COL+CRI+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ISR+ITA+JPN+KOR+LVA+LTU+LUX+MEX+NLD+NZL+NOR+POL+PRT+SVK+SVN+ESP+SWE+CHE+TUR+GBR+USA.T_HRSAV.PEHRS/all?startTime=2008&endTime=2022",
     ).to_pandas()
 
     hours = pd.DataFrame(data_hours).reset_index()
