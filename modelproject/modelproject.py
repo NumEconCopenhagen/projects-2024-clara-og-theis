@@ -169,7 +169,7 @@ class NashBargainingClass:
         plt.hist(w_values, bins=100, range=(15, 40)) 
         plt.xlabel('Wage')
         plt.ylabel('Frequency')
-        plt.title('Distribution of Wages')
+        plt.title('Distribution of Wages with a Minimum Wage')
         plt.grid(alpha=0.3)
         plt.show()
     
