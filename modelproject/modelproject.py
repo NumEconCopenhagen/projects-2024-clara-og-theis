@@ -3,6 +3,9 @@ from types import SimpleNamespace
 import sympy as sm
 import numpy as np
 import matplotlib.pyplot as plt
+from IPython.display import display, clear_output
+from ipywidgets import interact, FloatSlider, IntSlider, Button, Layout
+import ipywidgets as widgets
 
 class NashBargainingClass:
     
@@ -165,7 +168,63 @@ class NashBargainingClass:
         plt.title('Distribution of Wages with a Minimum Wage')
         plt.grid(alpha=0.3)
         plt.show()
-    
-    
-    
-    
+
+
+    def interactive_plot(self):
+        """ Interactive plot for exploring Nash Bargaining Model """
+        def update(change):
+            clear_output(wait=True)
+            display(alpha_slider, theta_slider, d1_slider, d2_slider, m_slider, update_button)
+            self.val.alpha = alpha_slider.value
+            self.val.theta = theta_slider.value
+            self.val.d1 = d1_slider.value
+            self.val.d2 = d2_slider.value
+            self.val.m = m_slider.value
+            wage = self.numericalsolution()
+            print(f"Calculated wage: {wage}")
+
+            # Simulate distribution of wages
+            self.minimumwage()
+
+        # Customize slider width and description width
+        slider_layout = Layout(width='600px', margin='0px 0px 0px 20px')  # Adjust the left margin as needed
+        description_width = 'initial'  # This setting helps to avoid cutting off the descriptions
+
+        alpha_slider = widgets.FloatSlider(
+        value=1/3, min=0, max=1, step=0.01,
+        description='Alpha: Bargaining power of the worker',
+        style={'description_width': description_width},
+          layout=slider_layout
+        )
+        theta_slider = widgets.IntSlider(
+        value=60, min=40, max=80, step=1,
+        description='Theta: Productivity of the worker',
+        style={'description_width': description_width},
+        layout=slider_layout
+        )
+        d1_slider = widgets.IntSlider(
+        value=10, min=0, max=20, step=1,
+        description='d1: Minimum acceptable conditions',
+        style={'description_width': description_width},
+        layout=slider_layout
+        )
+        d2_slider = widgets.IntSlider(
+        value=0, min=0, max=10, step=1,
+        description='d2: Minimum acceptable conditions',
+        style={'description_width': description_width},
+        layout=slider_layout
+        )
+        m_slider = widgets.IntSlider(
+        value=20, min=15, max=30, step=1,
+        description='Minimum Wage: Minimum wage constraint on the bargaining outcome',
+        style={'description_width': description_width},
+        layout=slider_layout
+        )
+
+        # Button to trigger the update
+        update_button = Button(description='Update Results')
+        update_button.on_click(update)
+        
+        # Display widgets
+        display(alpha_slider, theta_slider, d1_slider, d2_slider, m_slider, update_button)
+
