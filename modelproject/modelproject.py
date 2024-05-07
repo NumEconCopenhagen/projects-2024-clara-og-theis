@@ -11,7 +11,6 @@ class NashBargainingClass:
 
         par = self.par = SimpleNamespace()
         val = self.val = SimpleNamespace()
-        sim = self.sim = SimpleNamespace()
 
         # model parameters for analytical solution
         par.w = sm.symbols('w')
@@ -27,14 +26,11 @@ class NashBargainingClass:
         val.alpha = 1/3
         val.alpha_vec = np.linspace(0,1,10)
 
-        # parameter values for simulation
-        np.random.seed(100)  
-        sim.N = 10000
-        sim.theta = np.random.normal(60, 10, sim.N)
-        sim.d1 = 10
-        sim.d2 = 0
-        sim.alpha = 1/3
-        sim.m  = 20
+        np.random.seed(100) 
+        val.N = 10000
+        val.theta_vec = np.random.normal(60, 10, val.N)
+        val.m = 20
+
 
     def analyticalsolution(self):
         """ solve the Nash bargaining problem analytically """
@@ -83,7 +79,7 @@ class NashBargainingClass:
         # c. maximize surplus
         result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
 
-        w = f'w = {result.x[0]:.1f}'
+        w = result.x[0]
     
         return w
     
@@ -94,19 +90,11 @@ class NashBargainingClass:
         w_values = []  # Store w values for each alpha
 
         for alpha in val.alpha_vec:
-            # a. objective function
-            obj = lambda w: -(((self.utility_1(w)-val.d1)**alpha)*((self.utility_2(w)-val.d2)**(1-alpha)))
-
-            # b. initial guess and bounds
-            bounds = [(val.d1, val.theta)]
-            initial_guess = val.d1
-
-            # c. maximize surplus
-            result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
-
-            w = result.x[0]
+            val.alpha = alpha
+            
+            w = self.numericalsolution()
             w_values.append(w)
-
+        
         # Create a new figure
         fig = plt.figure()
         ax = fig.add_subplot(1,1,1)
@@ -119,17 +107,20 @@ class NashBargainingClass:
         plt.show()
     
     def simulatewdistribution(self):
-        sim = self.sim
+        """ simulate wage distribution """
+
+        val = self.val
+        val.alpha = 1/3 #redefine the global value of alpha
 
         w_values = []  # Store w values for each individual
         
-        for theta in sim.theta:
+        for theta in val.theta_vec:
             # a. Objective function
-            obj = lambda w: -(((self.utility_1(w)-sim.d1)**sim.alpha)*((theta-w-sim.d2)**(1-sim.alpha)))
+            obj = lambda w: -(((self.utility_1(w)-val.d1)**val.alpha)*((theta-w-val.d2)**(1-val.alpha)))
             
             # b. initial guess and bounds
-            bounds = [(sim.d1, theta)]
-            initial_guess = sim.d1
+            bounds = [(val.d1, theta)]
+            initial_guess = val.d1
 
             # c. maximize surplus
             result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
@@ -146,18 +137,20 @@ class NashBargainingClass:
         plt.show()
 
     def minimumwage(self):
-        sim = self.sim
+        """ simulate wage distribution with a minimum wage """
+
+        val = self.val
 
         w_values = []  # Store w values for each individual
         
-        for theta in sim.theta:
-            if theta >= sim.m:
+        for theta in val.theta_vec:
+            if theta >= val.m:
                 # a. Objective function
-                obj = lambda w: -(((self.utility_1(w)-sim.d1)**sim.alpha)*((theta-w-sim.d2)**(1-sim.alpha)))
+                obj = lambda w: -(((self.utility_1(w)-val.d1)**val.alpha)*((theta-w-val.d2)**(1-val.alpha)))
             
                 # b. initial guess and bounds
-                bounds = [(sim.m, theta)]
-                initial_guess = sim.m
+                bounds = [(val.m, theta)]
+                initial_guess = val.m
 
                 # c. maximize surplus
                 result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
