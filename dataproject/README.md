@@ -23,7 +23,8 @@ Dependencies:
 The analysis is conducted using Python, and aside from a standard Anaconda Python 3 installation, the following libraries are necessary:
 
     Pandas for data manipulation and analysis.
-    Matplotlib and Seaborn for data visualization.
+    Pandasdmx to fech OECD data. 
+    Matplotlib for data visualization.
     GeoPandas for geographical data processing and mapping.
     Jupyter Notebook for interactive computational documentation.
 
