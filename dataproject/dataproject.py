@@ -8,7 +8,7 @@ from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from IPython.display import HTML
 
 def fetching_data_emplrate():
-    """ Import data on employment rates """ 
+    """ Import and clean data on employment rates """ 
 
     # Tell pdmx we want OECD data
     oecd = pdmx.Request("OECD")
@@ -31,7 +31,7 @@ def fetching_data_emplrate():
     return emplrate
 
 def fetching_data_hours():
-    """ Import data on average hours worked per person employed """ 
+    """ Import and clean data on average hours worked per person employed """ 
     
     # Tell pdmx we want OECD data
     oecd = pdmx.Request("OECD")
@@ -53,9 +53,13 @@ def fetching_data_hours():
     return hours
 
 def format_float(value):
+    """ Set format for decimals """ 
+
     return "{:.2f}".format(value)
 
 def table(emplrate, hours):
+    """ Create a table of descriptive statistics """ 
+
     def descriptive_stats(country, gender):
         pd.options.display.float_format = format_float
     
@@ -121,6 +125,8 @@ def table(emplrate, hours):
 
 
 def worldmapemp(emplrate):
+    """ Create a world map of employment rates """ 
+
     # Import world map data
     worldmap = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
@@ -145,6 +151,8 @@ def worldmapemp(emplrate):
     return widgets.interactive(create_map_emplrate, gender=gender_dropdown)
 
 def worldmaphours(hours):
+    """ Create a world map of average hours worked per person employed """ 
+
     # Import world map data
     worldmap = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
@@ -161,3 +169,80 @@ def worldmaphours(hours):
     mapdata_hours.plot(column="AVHRS", ax=ax, cax=cax, cmap='OrRd', legend=True, legend_kwds={"label": f"Average working hours per person employed (hours per year)"}, missing_kwds={'color':'lightgrey'}, vmin=1400, vmax=2000)
     ax.set_title(f'Average working hours per person employed in OECD countries in 2022', size=20)
     plt.show()
+
+def index(data_merged):
+    """ Create an index for average hours worked per person employed """ 
+
+    # Create the baseline and add it as a column to the dataset
+    baseline_avhrs_2008 = data_merged[data_merged['YEAR'] == '2008'].groupby('LOCATION')['AVHRS'].first()
+    data_merged['baseline_avhrs'] = data_merged['LOCATION'].map(baseline_avhrs_2008)
+
+    # Compute the index
+    data_merged['AVHRS_index'] = (data_merged['AVHRS'] / data_merged['baseline_avhrs'])*100
+
+def plotacrosstime(data_merged):
+    """ Plot the index across time """ 
+
+    def time_plot(**kwargs):
+        selected_locations = [location for location, value in kwargs.items() if value]
+        fig = plt.figure(figsize=(10, 6))
+        ax = fig.add_subplot(1, 1, 1)
+        for location in selected_locations:
+            ax.plot(data_merged[(data_merged['LOCATION'] == location) & (data_merged['SUBJECT'] == 'All')]['YEAR'], 
+                    data_merged[(data_merged['LOCATION'] == location) & (data_merged['SUBJECT'] == 'All')]['AVHRS_index'], 
+                    label=location)
+        ax.set_xlabel('Year')
+        ax.set_ylabel('Indexed average hours worked per person employed (2008 = 100)')
+        ax.set_title('Indexed average hours worked per person employed across time')
+        ax.legend()
+        plt.show()
+
+    # Create checkboxes for selecting LOCATION
+    locations_checkbox = {location: widgets.Checkbox(value=(location == 'DNK' or i < 3), description=location) for i, location in enumerate(data_merged['LOCATION'].unique())}
+
+    return widgets.interactive(time_plot, **locations_checkbox)
+
+def scatterplot(data_merged):
+    """ Creates a scatter plot of employment rates against working hours """
+
+    # Create the figure
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x=data_merged[(data_merged['SUBJECT'] == 'All') & (data_merged['YEAR'] == '2022')]['AVHRS'], 
+                y=data_merged[(data_merged['SUBJECT'] == 'All') & (data_merged['YEAR'] == '2022')]['EMPLRATE'])
+
+    plt.xlabel('Average hours worked per person employed (hours per year)')
+    plt.ylabel('Employment rate (%)')
+    plt.title('Scatter plot of employment rate against average working hours across OECD countries in 2022')
+
+    # Annotate points with country names
+    for index, row in data_merged[(data_merged['SUBJECT'] == 'All') & (data_merged['YEAR'] == '2022')].iterrows():
+        plt.annotate(row['LOCATION'], (row['AVHRS'], row['EMPLRATE']))
+
+    plt.show()
+
+def barchart(data_merged):
+    """ Creates a bar chart of employment rates for males and females, respectively """
+
+    def update_plot(gender):
+        plt.figure(figsize=(10, 6))
+        
+        # Filter data for the selected gender and year
+        filtered_data = data_merged[(data_merged['YEAR'] == '2022') & (data_merged['SUBJECT'] == gender)]
+
+        # Sort the data in descending order of employment rate
+        sorted_data = filtered_data.sort_values(by='EMPLRATE', ascending=False)
+
+        # Plotting the data
+        plt.bar(sorted_data['LOCATION'], sorted_data['EMPLRATE'], color='skyblue')
+        plt.bar(sorted_data[sorted_data['LOCATION'] == 'DNK']['LOCATION'], sorted_data[sorted_data['LOCATION'] == 'DNK']['EMPLRATE'], color='blue')
+        
+        plt.xlabel('Country')
+        plt.ylabel('Employment Rate (%)')
+        plt.title(f'{gender} Employment Rates in OECD Countries in 2022')
+        plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better readability
+        plt.show()
+
+    # Create dropdown menu for selecting gender
+    gender_dropdown = widgets.Dropdown(options=['Male', 'Female'], value='Female', description='Gender:')
+
+    return widgets.interactive(update_plot, gender=gender_dropdown)
