@@ -1,13 +1,13 @@
 # Model project
 
 Project Title:
-"Exploring Wage Negotiations Using the Nash Bargaining Model"
+"Wage formation in a Nash Bargaining game"
 
 Project Description:
-This project delves into wage determination through the lens of the Nash Bargaining Model. It simulates and analyzes wage outcomes under different bargaining powers and external conditions. The model accounts for various economic scenarios including the impact of minimum wage laws, varying worker productivity, and bargaining power dynamics on the wage distribution. By utilizing a numerical approach and analytical solutions, this project offers insights into how wages are negotiated and determined in theoretical economic settings.
+This project delves into wage formation through the lens of the Nash Bargaining Model. The model is solved analytically as well as numerically and under different values of the worker's bargaining power. Using the numerical solution to the bargaining problem a wage distribution is simulated. As an extension to the model a minimum wage is introduced and its effects on the wage distirbution is analyzed. 
 
 Results:
-The outcomes of this analysis are accessible via interactive simulations and visualizations in the Jupyter notebook: modelproject.ipynb. Users can interact with the model parameters through a graphical user interface to observe how changes in parameters like bargaining power, minimum wage, and worker productivity affect wage distributions and bargaining outcomes.
+The outcomes of this analysis are accessible via interactive simulations and visualizations in the Jupyter notebook: modelproject.ipynb. Users can interact with the model parameters through a graphical user interface to observe how changes in parameters like bargaining power affect bargaining outcomes.
 
 Datasets:
 This analysis is purely theoretical and does not employ external datasets. Instead, it uses simulated data generated within the model to explore the implications of the Nash Bargaining theory. The model parameters are set to reflect a range of plausible economic conditions.
