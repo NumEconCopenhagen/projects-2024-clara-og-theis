@@ -118,7 +118,7 @@ class NashBargainingClass:
         """ simulate wage distribution """
 
         val = self.val
-        val.alpha = 1/3 #redefine the global value of alpha
+        val.alpha = 1/3 #redefine the value of alpha
 
         w_values = []  # Store w values for each individual
         
@@ -143,37 +143,6 @@ class NashBargainingClass:
         plt.title('Distribution of Wages')
         plt.grid(alpha=0.3)
         plt.show()
-
-    def minimumwage(self):
-        """ simulate wage distribution with a minimum wage """
-
-        val = self.val
-
-        w_values = []  # Store w values for each individual
-        
-        for theta in val.theta_vec:
-            if theta >= val.m:
-                # a. Objective function
-                obj = lambda w: -(((self.utility_1(w)-val.d1)**val.alpha)*((theta-w-val.d2)**(1-val.alpha)))
-            
-                # b. initial guess and bounds
-                bounds = [(val.m, theta)]
-                initial_guess = val.m
-
-                # c. maximize surplus
-                result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
-
-                w = result.x[0]
-                w_values.append(w)
-
-        # Plot the distribution of w
-        plt.hist(w_values, bins=100, range=(15, 40)) 
-        plt.xlabel('Wage')
-        plt.ylabel('Frequency')
-        plt.title('Distribution of Wages with a Minimum Wage')
-        plt.grid(alpha=0.3)
-        plt.show()
-
 
     def interactive_plot(self):
         """ Interactive plot for exploring Nash Bargaining Model """
@@ -213,3 +182,34 @@ class NashBargainingClass:
         # Display widgets
         display(alpha_slider, d1_slider, update_button)
 
+    def minimumwage(self):
+            """ simulate wage distribution with a minimum wage """
+
+            val = self.val
+            val.alpha = 1/3 #redefine the value of alpha
+            val.d1 = 10 #redefine the value of d1
+
+            w_values = []  # Store w values for each individual
+            
+            for theta in val.theta_vec:
+                if theta >= val.m:
+                    # a. Objective function
+                    obj = lambda w: -(((self.utility_1(w)-val.d1)**val.alpha)*((theta-w-val.d2)**(1-val.alpha)))
+                
+                    # b. initial guess and bounds
+                    bounds = [(val.m, theta)]
+                    initial_guess = val.m
+
+                    # c. maximize surplus
+                    result = optimize.minimize(obj, initial_guess, bounds=bounds, method='Nelder-Mead') 
+
+                    w = result.x[0]
+                    w_values.append(w)
+
+            # Plot the distribution of w
+            plt.hist(w_values, bins=100, range=(15, 40)) 
+            plt.xlabel('Wage')
+            plt.ylabel('Frequency')
+            plt.title('Distribution of Wages with a Minimum Wage')
+            plt.grid(alpha=0.3)
+            plt.show()
