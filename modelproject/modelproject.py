@@ -106,7 +106,13 @@ class NashBargainingClass:
         ax.set_xlabel('Alpha')
         ax.set_ylabel('Wage')
         ax.set_title('Wage as a function of alpha')
+
+        specific_alpha = 1/3
+        specific_wage = 26.7
+        ax.scatter(specific_alpha, specific_wage, color='red', s=100, zorder=5, label='Numerical solution where Alpha=1/3 and wage=26,7')
+
         ax.grid(True)
+        plt.legend()
         plt.show()
     
     def simulatewdistribution(self):
@@ -132,7 +138,7 @@ class NashBargainingClass:
             w_values.append(w)
 
         # Plot the distribution of w
-        plt.hist(w_values, bins=100, range=(15, 40))  
+        plt.hist(w_values, bins=100, range=(15, 50))  
         plt.xlabel('Wage')
         plt.ylabel('Frequency')
         plt.title('Distribution of Wages')
