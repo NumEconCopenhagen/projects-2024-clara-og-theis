@@ -114,11 +114,10 @@ class NashBargainingClass:
         plt.legend()
         plt.show()
     
-    def simulatewdistribution(self):
+    def simulatewdistribution(self, min, max):
         """ simulate wage distribution """
 
         val = self.val
-        val.alpha = 1/3 #redefine the value of alpha
 
         w_values = []  # Store w values for each individual
         
@@ -137,7 +136,7 @@ class NashBargainingClass:
             w_values.append(w)
 
         # Plot the distribution of w
-        plt.hist(w_values, bins=100, range=(15, 40))  
+        plt.hist(w_values, bins=100, range=(min, max))  
         plt.xlabel('Wage')
         plt.ylabel('Frequency')
         plt.title('Distribution of Wages')
@@ -155,7 +154,7 @@ class NashBargainingClass:
             wage = self.numericalsolution()
 
             # Simulate distribution of wages
-            self.simulatewdistribution()
+            self.simulatewdistribution(min = 0, max = 100)
 
         # Customize slider width and description width
         slider_layout = Layout(width='600px', margin='0px 0px 0px 20px')  # Adjust the left margin as needed
