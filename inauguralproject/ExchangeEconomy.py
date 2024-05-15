@@ -190,8 +190,8 @@ class ExchangeEconomyClass:
                 best_X2A = 1-x2B
         
         if do_print: 
-            print(f'Consumer As maximised utility is {utility_best:.4f} at p1 = {best_p1:.4f}')
-            print(f'The allocation is then X1A = {best_X1A:.4f} and X2A = {best_X2A:.4f}')
+            print(f'Consumer A´s maximized utility is {utility_best:.4f} at p1 = {best_p1:.4f}')
+            print(f'The allocation is then x1A = {best_X1A:.4f} and x2A = {best_X2A:.4f}')
             return None
 
         return best_X1A, best_X2A 
@@ -216,8 +216,8 @@ class ExchangeEconomyClass:
         uA = self.utility_A(X1A, X2A)
 
         if do_print: 
-            print(f'Consumer As maximised utility is {uA:.4f} at p1 = {p1:.4f}')
-            print(f'The allocation is then X1A = {X1A:.4f} and X2A = {X2A:.4f}')
+            print(f'Consumer A´s maximised utility is {uA:.4f} at p1 = {p1:.4f}')
+            print(f'The allocation is then x1A = {X1A:.4f} and x2A = {X2A:.4f}')
             return None
         
         return X1A, X2A
@@ -245,7 +245,7 @@ class ExchangeEconomyClass:
                 uA_best = uA
 
         if do_print: 
-            print(f'The allocation is X1A = {X1A_best:.4f} and X2A = {X2A_best:.4f} with utility of consumer A at {uA_best:.4f}')
+            print(f'The allocation is x1A = {X1A_best:.4f} and x2A = {X2A_best:.4f} with utility of consumer A equal to {uA_best:.4f}')
             return None
 
         return X1A_best, X2A_best
@@ -273,7 +273,7 @@ class ExchangeEconomyClass:
         uA = self.utility_A(x1A, x2A)
 
         if do_print: 
-            print(f'The allocation is X1A = {x1A:.4f} and X2A = {x2A:.4f} with utility of consumer A at {uA:.4f}')
+            print(f'The allocation is x1A = {x1A:.4f} and x2A = {x2A:.4f} with utility of consumer A equal to {uA:.4f}')
             return None
 
         return x1A, x2A 
@@ -304,7 +304,7 @@ class ExchangeEconomyClass:
         uB = self.utility_B(x1B, x2B)
 
         if do_print: 
-            print(f'The allocation is X1A = {x1A:.4f}, X2A = {x2A:.4f}, X1B = {x1B:.4f} and X2B = {x2B:.4f}')
+            print(f'The allocation is x1A = {x1A:.4f}, x2A = {x2A:.4f}, x1B = {x1B:.4f} and x2B = {x2B:.4f}')
             print(f'The utility of consumer A is {uA:.4f} and the utility of consumer B is {uB:.4f}')
             return None
 
