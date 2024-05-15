@@ -1,18 +1,17 @@
 # Model project
 
-Project Title:
-"Wage formation in a Nash Bargaining game"
+**Project Title: "Wage formation in a Nash Bargaining game"**
 
-Project Description:
+**Project Description:**
 This project delves into wage formation through the lens of the Nash Bargaining Model. The model is solved analytically as well as numerically and under different values of the worker's bargaining power. Using the numerical solution to the bargaining problem a wage distribution is simulated. As an extension to the model a minimum wage is introduced and its effects on the wage distirbution is analyzed. 
 
-Results:
+**Results:**
 The outcomes of this analysis are accessible via interactive simulations and visualizations in the Jupyter notebook: modelproject.ipynb. Users can interact with the model parameters through a graphical user interface to observe how changes in parameters like bargaining power affect bargaining outcomes.
 
-Datasets:
+**Datasets:**
 This analysis is purely theoretical and does not employ external datasets. Instead, it uses simulated data generated within the model to explore the implications of the Nash Bargaining theory. The model parameters are set to reflect a range of plausible economic conditions.
 
-Dependencies:
+**Dependencies:**
 Apart from a standard Anaconda Python 3 installation, the project relies on the following Python libraries:
 
     NumPy for numerical operations.
