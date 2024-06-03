@@ -173,6 +173,7 @@ def worldmaphours(hours):
 def index(data_merged):
     """ Create an index for average hours worked per person employed """ 
 
+    # We use the following method to take account of the fact that some countries do not have data for average working hours in 2008. The index for these will be NaN.
     # Create the baseline and add it as a column to the dataset
     baseline_avhrs_2008 = data_merged[data_merged['YEAR'] == '2008'].groupby('LOCATION')['AVHRS'].first()
     data_merged['baseline_avhrs'] = data_merged['LOCATION'].map(baseline_avhrs_2008)
