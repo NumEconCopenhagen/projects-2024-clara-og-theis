@@ -2,11 +2,10 @@
 
 **Project Title: "Analysing work effort in Denmark compared to other OECD countries"**
 
+The **results** of the project can be seen from running [dataproject.ipynb](dataproject.ipynb).
+
 **Project Description:**
 This project investigates the total work effort in Denmark compared to other OECD countries by examining trends in employment rates and average working hours per person employed from 2008 to 2022. Specifically, the analysis looks to understand the labor market dynamics in Denmark and the broader OECD nations reflected in these trends.
-
-**Results:**
-The findings of this project are documented and can be explored through interactive visualizations and computations in the provided Jupyter notebook: dataproject.ipynb.
 
 **Datasets Employed:**
 

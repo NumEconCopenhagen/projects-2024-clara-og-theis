@@ -190,14 +190,14 @@ class ExchangeEconomyClass:
                 best_X2A = 1-x2B
         
         if do_print: 
-            print(f'Consumer A´s maximized utility is {utility_best:.4f} at p1 = {best_p1:.4f}')
+            print(f'At p1 = {best_p1:.4f} consumer A´s utility is maximized and equal to {utility_best:.4f}')
             print(f'The allocation is then x1A = {best_X1A:.4f} and x2A = {best_X2A:.4f}')
             return None
 
         return best_X1A, best_X2A 
             
     def Utility_max_b(self,do_print=True):
-        # Define initial conditions for best utility and corresponding price
+        """ maximize utility of consumer A for any positive price """
 
         par = self.par
 
@@ -216,7 +216,7 @@ class ExchangeEconomyClass:
         uA = self.utility_A(X1A, X2A)
 
         if do_print: 
-            print(f'Consumer A´s maximised utility is {uA:.4f} at p1 = {p1:.4f}')
+            print(f'At p1 = {p1:.4f} consumer A´s utility is maximized and equal to {uA:.4f} ')
             print(f'The allocation is then x1A = {X1A:.4f} and x2A = {X2A:.4f}')
             return None
         
