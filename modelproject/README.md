@@ -16,4 +16,3 @@ Apart from a standard Anaconda Python 3 installation, the project relies on the 
     SymPy for symbolic mathematics to derive analytical solutions.
     IPython and ipywidgets for creating interactive elements in the Jupyter notebook.
 
-This setup ensures that the project is fully reproducible and allows for interactive exploration of theoretical economic models, providing a dynamic tool for understanding complex wage negotiation dynamics.

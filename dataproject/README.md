@@ -25,4 +25,3 @@ The analysis is conducted using Python, and aside from a standard Anaconda Pytho
     Matplotlib for data visualization.
     GeoPandas for geographical data processing and mapping.
 
-This configuration ensures that all visualizations and computational analyses are reproducible and interactive, allowing for dynamic exploration of the data.
