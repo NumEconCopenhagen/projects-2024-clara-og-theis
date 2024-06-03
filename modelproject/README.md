@@ -2,7 +2,7 @@
 
 **Project Title: "Wage formation in a Nash Bargaining game"**
 
-The **results** of the project can be seen from running [modelproject.ipynb](modelproject.ipynb) which refers to the file[modelproject.py](modelproject.py).
+The **results** of the project can be seen from running [modelproject.ipynb](modelproject.ipynb) which refers to the file [modelproject.py](modelproject.py).
 
 **Project Description:**
 This project delves into wage formation through the lens of the Nash Bargaining Model. The model is solved analytically as well as numerically and under different values of the worker's bargaining power. Using the numerical solution to the bargaining problem a wage distribution is simulated. As an extension to the model a minimum wage is introduced and its effects on the wage distirbution is analyzed. 
