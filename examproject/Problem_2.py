@@ -149,7 +149,7 @@ class CareerChoiceClass:
         subjective_expected_utilities_after = np.zeros((par.N, par.K))
         realized_utilities_after = np.zeros((par.N, par.K))
 
-        switch_count = np.zeros((par.N, par.K)) # Counting how many switch to each career
+        switch_count = np.zeros((par.N, par.J)) # Counting how many switch to each career
 
         for k in range(par.K):
             for i in range(par.N):
@@ -248,4 +248,14 @@ class CareerChoiceClass:
         plt.tight_layout()
         plt.show()
 
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        for j in range(par.J):
+            ax.plot(par.F, switch_shares[:, j], label=f'Initial Career {j+1}')
+        ax.set_xlabel('Graduate')
+        ax.set_ylabel('Share of Graduates Switching Careers')
+        ax.set_title('Share of Graduates Switching Careers by Initial Career Choice')
+        ax.legend()
+        plt.grid(True)
+        plt.show()
+        
 
