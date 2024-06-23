@@ -251,14 +251,3 @@ class CareerChoiceClass:
 
         plt.tight_layout()
         plt.show()
-
-        # Plot 4: Switch Share 2
-        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-        for j in range(par.J):
-            ax.plot(par.F, switch_shares[:, j], label=f'Initial Career {j+1}')
-        ax.set_xlabel('Graduate')
-        ax.set_ylabel('Share of Graduates Switching Careers')
-        ax.set_title('Share of Graduates Switching Careers by Initial Career Choice')
-        ax.legend()
-        plt.grid(True)
-        plt.show()
