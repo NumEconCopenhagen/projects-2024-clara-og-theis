@@ -12,13 +12,13 @@ class CareerChoiceClass:
         par.N = 10
         par.K = 10000
 
-        par.F = np.arange(1,par.N+1)
+        par.F = np.arange(1, par.N + 1)
         par.sigma = 2
 
-        par.v = np.array([1,2,3])
+        par.v = np.array([1, 2, 3])
         par.c = 1
 
-    def simulation(self, do_print = True):
+    def simulation(self, do_print=True):
         """ Simulate and calculate expected utility and the average realised utility """
 
         par = self.par
@@ -149,7 +149,7 @@ class CareerChoiceClass:
         subjective_expected_utilities_after = np.zeros((par.N, par.K))
         realized_utilities_after = np.zeros((par.N, par.K))
 
-        switch_count = np.zeros((par.N, par.J)) # Counting how many switch to each career
+        switch_count = np.zeros((par.N, par.J)) # Counting how many switch from each career
 
         for k in range(par.K):
             for i in range(par.N):
@@ -196,6 +196,10 @@ class CareerChoiceClass:
                 # Count the number of graduates switching from each career
                 if chosen_career_first_year != chosen_career_after:
                     switch_count[i, chosen_career_first_year] += 1
+
+        # Calculate average subjective expected utility and average realized utility for first year
+        avg_subjective_expected_utility_first_year = np.mean(subjective_expected_utilities_first_year, axis=1)
+        avg_realized_utility_first_year = np.mean(realized_utilities_first_year, axis=1)
 
         # Calculate average subjective expected utility and average realized utility for first year
         avg_subjective_expected_utility_first_year = np.mean(subjective_expected_utilities_first_year, axis=1)
@@ -248,14 +252,13 @@ class CareerChoiceClass:
         plt.tight_layout()
         plt.show()
 
+        # Plot 4: Switch Share 2
         fig, ax = plt.subplots(1, 1, figsize=(10, 6))
         for j in range(par.J):
             ax.plot(par.F, switch_shares[:, j], label=f'Initial Career {j+1}')
-        ax.set_xlabel('Graduate')
+        ax.set_xlabel('Number of Friends (F_i)')
         ax.set_ylabel('Share of Graduates Switching Careers')
         ax.set_title('Share of Graduates Switching Careers by Initial Career Choice')
         ax.legend()
         plt.grid(True)
         plt.show()
-        
-
