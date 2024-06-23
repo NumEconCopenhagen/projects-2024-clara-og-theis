@@ -209,7 +209,7 @@ class CareerChoiceClass:
         avg_subjective_expected_utility_after = np.mean(subjective_expected_utilities_after, axis=1)
         avg_realized_utility_after = np.mean(realized_utilities_after, axis=1)
 
-        # Calculate share of graduates that choose to switch careers in the second year, conditional on first year choice
+        # Calculate share of graduates that choose to switch careers in the second year
         switch_shares = switch_count / par.K * 100
 
         #  Plot 1: Subjective Expected Utility
@@ -245,7 +245,7 @@ class CareerChoiceClass:
 
         plt.xlabel('Graduate')
         plt.ylabel('Share (%)')
-        plt.title('The share of graduates that chooses to switch careers, conditional on which career they chose in the first year')
+        plt.title('The share of graduates that chooses to switch careers, showing where they switch from')
         plt.xticks(np.arange(1, par.N + 1))
         plt.legend(title='Career Tracks', loc='upper right')
 
