@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 class PointAnalysis:
     def __init__(self, seed=2024):
         """Initialize the PointAnalysis class with random points and initial parameters"""
+        
         self.rng = np.random.default_rng(seed)
         self.X = self.rng.uniform(size=(50, 2))
         self.y = self.rng.uniform(size=(2,))
+
         self.A = None
         self.B = None
         self.C = None
@@ -20,10 +22,14 @@ class PointAnalysis:
     
     def find_point(self, y, condition):
         """Find the closest point in X that satisfies the given condition"""
+        
         filtered_points = [point for point in self.X if condition(point, y)]
+        
         if not filtered_points:
             return np.nan, np.nan
+        
         distances = [np.linalg.norm(point - y) for point in filtered_points]
+        
         return filtered_points[np.argmin(distances)]
     
     def compute_points(self, y):
@@ -58,10 +64,13 @@ class PointAnalysis:
     
     def plot_question_1(self):
         """Plot the random points, the point y, and the triangles ABC and CDA"""
+        
         self.compute_points(self.y)
+        
         plt.figure(figsize=(8, 8))
         plt.scatter(self.X[:, 0], self.X[:, 1], label='Random Points in X')
         plt.scatter(self.y[0], self.y[1], color='red', label='Point y')
+        
         if not np.isnan(self.A).any():
             plt.scatter(self.A[0], self.A[1], color='blue', label='Point A')
         if not np.isnan(self.B).any():
@@ -86,7 +95,9 @@ class PointAnalysis:
     
     def question_2(self):
         """Compute and print the barycentric coordinates of point y with respect to triangles ABC and CDA"""
+        
         self.compute_barycentric_coordinates(self.y)
+        
         print(f"r_ABC: {self.r_ABC}")
         print(f"r_CDA: {self.r_CDA}")
         print(f"y is inside triangle ABC: {self.inside_ABC}")
@@ -111,15 +122,19 @@ class PointAnalysis:
     
     def question_3(self):
         """Compute and print the approximation of f(y) and compare it with the true value"""
+        
         f_y_approx = self.approximate_f_y(self.y, self.f)
         f_y_true = self.f(self.y)
+        
         print(f"Approximated f(y): {f_y_approx}")
         print(f"True f(y): {f_y_true}")
         print(f"Absolute error: {abs(f_y_approx - f_y_true)}")
     
     def question_4(self):
         """Repeat the approximation of f(y) for all points in the set Y and print the results"""
+        
         results = [self.process_y(y, self.f) for y in self.Y]
+        
         for i, (f_y_approx, f_y_true, error) in enumerate(results):
             print(f"Point Y[{i}]: {self.Y[i]}")
             print(f"  Approximated f(y): {f_y_approx}")
@@ -128,10 +143,13 @@ class PointAnalysis:
 
     def process_y(self, y, f):
         """Process a given point y to compute the approximation and true value of f(y)"""
+        
         self.y = np.array(y)
         self.compute_points(y)
         self.compute_barycentric_coordinates(y)
+        
         f_y_approx = self.approximate_f_y(y, f)
         f_y_true = f(self.y)
         error = abs(f_y_approx - f_y_true)
+        
         return f_y_approx, f_y_true, error

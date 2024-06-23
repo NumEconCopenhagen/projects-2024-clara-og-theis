@@ -46,7 +46,7 @@ class ProductionEconomyCO2Taxation:
     def utility(self, c1, c2, ell):
         """Calculate utility for the consumer"""
         par = self.par
-        return np.log((c1 ** par.alpha) * (c2 ** (1 - par.alpha))) - par.nu * (ell ** (1 + par.epsilon)) / (1 + par.epsilon)
+        return np.log(c1 ** par.alpha * c2 ** (1 - par.alpha)) - par.nu * ell ** (1 + par.epsilon) / (1 + par.epsilon)
 
     def consumption(self, ell, p1, p2):
         """Calculate optimal consumption"""
@@ -62,7 +62,7 @@ class ProductionEconomyCO2Taxation:
         obj = lambda ell: -(self.utility(*self.consumption(ell, p1, p2), ell))
         initial_guess = 1.0
         result = optimize.minimize(obj, initial_guess, method='SLSQP')
-        return result.x
+        return result.x[0]
 
     def check_market_clearing(self, p1, p2):
         """Check market clearing conditions"""
@@ -85,7 +85,7 @@ class ProductionEconomyCO2Taxation:
         good_market_1_error = c1_star - y1
         good_market_2_error = c2_star - y2
 
-        return np.array([labor_market_error, good_market_1_error, good_market_2_error])  
+        return [labor_market_error, good_market_1_error, good_market_2_error]  
 
     def find_equilibrium(self):
         """Find the equilibrium prices using Walras' law"""
@@ -105,6 +105,7 @@ class ProductionEconomyCO2Taxation:
     def social_welfare(self, tau):
         """Calculate social welfare for a given tau"""
         par = self.par
+
         par.tau = tau
         
         # Find equilibrium prices
@@ -116,16 +117,16 @@ class ProductionEconomyCO2Taxation:
         ell_star = self.optimal_labor(par.p1, par.p2)
         
         # Calculate outputs and utility
-        y1_star = self.output(par.w, par.p1)
-        y2_star = self.output(par.w, par.p2)
-        c1_star, c2_star = self.consumption(ell_star,par.p1, par.p2)
-        
+        y1_star = self.output(par.w,  par.p1)
+        y2_star = self.output(par.w,  par.p2)
+        c1_star, c2_star = self.consumption(ell_star, par.p1, par.p2) 
+
         # Government budget balance condition
         par.T = tau * c2_star
         
         # Recalculate consumption with updated T
-        c1_star, c2_star = self.consumption(ell_star,par.p1, par.p2)
-        
+        c1_star, c2_star = self.consumption(ell_star, par.p1, par.p2) 
+
         # Calculate utility and social welfare
         U = self.utility(c1_star, c2_star, ell_star)
         SWF = U - par.kappa * y2_star
@@ -133,37 +134,34 @@ class ProductionEconomyCO2Taxation:
 
     def find_optimal_tax(self):
         """Find the optimal tau and T to maximize social welfare"""
+
+        par = self.par
         
         result = optimize.minimize_scalar(lambda tau: -self.social_welfare(tau), bounds=(0, 1), method='bounded')
         
         optimal_tau = result.x
-        self.par.tau = optimal_tau
-        self.par.T = optimal_tau * self.output(self.par.w, self.par.p2)  # Calculate the corresponding T
+        optimal_T = optimal_tau * self.output(par.w, par.p2)  # Calculate the corresponding T
         
-        return optimal_tau, self.par.T
+        return optimal_tau, optimal_T
     
     def plot_swf(self):
         """Plot Social Welfare Function (SWF) against tau"""
         par = self.par
-    
-        # Range of tau values
-        tau_values = np.linspace(0, 10, 100)
-        
-        # Calculate SWF values
-        swf_values = np.array([self.social_welfare(tau) for tau in tau_values])
-        
+
         # Find optimal tau
         optimal_tau, _ = self.find_optimal_tax()
+        
+        # Range of tau values
+        tau_values = np.linspace(0, 1, 100)
+        swf_values = [self.social_welfare(tau) for tau in tau_values]
         
         # Plot
         plt.figure(figsize=(10, 6))
         plt.plot(tau_values, swf_values, label='Social Welfare Function')
-        plt.axvline(x=optimal_tau, color='r', linestyle='--', label=f'Optimal tau = {optimal_tau:.4f}')
+        plt.axvline(optimal_tau, color='r', linestyle='--', label=f'Optimal tau = {optimal_tau:.4f}')
         plt.xlabel('tau')
         plt.ylabel('Social Welfare Function')
         plt.title('Social Welfare Function vs tau')
         plt.legend()
         plt.grid(True)
         plt.show()
-
-        
