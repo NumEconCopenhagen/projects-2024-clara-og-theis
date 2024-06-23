@@ -256,7 +256,7 @@ class CareerChoiceClass:
         fig, ax = plt.subplots(1, 1, figsize=(10, 6))
         for j in range(par.J):
             ax.plot(par.F, switch_shares[:, j], label=f'Initial Career {j+1}')
-        ax.set_xlabel('Number of Friends (F_i)')
+        ax.set_xlabel('Graduate')
         ax.set_ylabel('Share of Graduates Switching Careers')
         ax.set_title('Share of Graduates Switching Careers by Initial Career Choice')
         ax.legend()
