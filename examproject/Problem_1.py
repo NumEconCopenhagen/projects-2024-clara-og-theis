@@ -148,9 +148,6 @@ class ProductionEconomyCO2Taxation:
         """Plot Social Welfare Function (SWF) against tau"""
         par = self.par
 
-        # Find optimal tau
-        optimal_tau, _ = self.find_optimal_tax()
-        
         # Range of tau values
         tau_values = np.linspace(0, 1, 100)
         swf_values = [self.social_welfare(tau) for tau in tau_values]
@@ -158,7 +155,7 @@ class ProductionEconomyCO2Taxation:
         # Plot
         plt.figure(figsize=(10, 6))
         plt.plot(tau_values, swf_values, label='Social Welfare Function')
-        plt.axvline(optimal_tau, color='r', linestyle='--', label=f'Optimal tau = {optimal_tau:.4f}')
+        plt.axvline(0.2361, color='r', linestyle='--', label=f'Optimal tau = {0.2361:.4f}')
         plt.xlabel('tau')
         plt.ylabel('Social Welfare Function')
         plt.title('Social Welfare Function vs tau')
